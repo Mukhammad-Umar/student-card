@@ -21,19 +21,6 @@ const menus = computed(() => {
         { url: 'MainClientsWhite', text: t('menus.whiteList'), permission: ['client_white_list_view'] }
       ]
     },
-    { url: 'MainOperations', text: t('menus.operations'), icon: 'mdi-bank-transfer', permission: ['autopayment_menu', 'report_menu', 'reverse_transaction_action'],
-      children: [
-        { url: 'MainOperationsAutopayments', text: t('autopayments'), permission: ['autopayment_menu'] },
-        { url: 'MainOperationsTransactions', text: t('menus.transactions'), permission: ['report_menu'] },
-        { url: 'MainOperationsOverdrafts', text: t('menus.overdraft'), permission: ['overdraft_menu'],
-          children: [
-            { url: 'MainOperationsOverdraftsAutopayments',  text: t('autopayments'),  permission: ['overdraft_autopayment_view'] },
-            { url: 'MainOperationsOverdraftsTransactions', text: t('menus.transactions'), permission: ['overdraft_transaction_view'] }
-          ]
-        },
-        { url: 'MainOperationsReversal', text: t('menus.refund'), permission: ['reverse_transaction_action'] }
-      ]
-    },
     { url: 'MainImport', text: t('menus.import'), icon: 'mdi-tray-arrow-down', permission: ['import_menu'],
       children: [
         { url: 'MainImportData', text: t('menus.importAll'), permission: ['import_files_add'] },

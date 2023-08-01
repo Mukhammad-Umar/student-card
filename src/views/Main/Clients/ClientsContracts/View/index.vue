@@ -4,8 +4,6 @@ import { ref, onMounted } from 'vue'
 import PageHeader from '@/components/Common/PageHeader.vue'
 import ClientData from '@/components/Partials/ListView/ClientData.vue'
 import ContractsTable from '@/components/Partials/ListView/ContractsTable.vue'
-import AutopaymentsTable from '@/components/Partials/ListView/AutopaymentsTable.vue'
-import TransactionsTable from '@/components/Partials/ListView/TransactionsTable.vue'
 
 import AddCard from '@/components/Dialogs/AddCard.vue'
 import AutopaymentCards from '@/components/Partials/Card/AutopaymentCards.vue'
@@ -35,8 +33,6 @@ onMounted(() => {
     <b-col lg="8">
       <ClientData @emit:client="client = $event" />
       <ContractsTable :clientPinfl="client.pinfl" />
-      <AutopaymentsTable :client="client" />
-      <TransactionsTable />
     </b-col>
 
     <b-col lg="4">
