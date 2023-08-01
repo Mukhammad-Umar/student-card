@@ -1,0 +1,106 @@
+<b-row class="table-list mb-3">
+  <b-col>
+    <TableFilters
+      :filterData="filterData"
+      :branches="branches"
+      :cardTypes="cardTypes"
+      :clientTypes="clientTypes"
+      :systemStates="systemStates"
+      :transactionStates="transactionStates"
+      @emit:search="getList"
+    />
+
+    <b-card no-body class="card-box-shadow">
+      <b-card-header class="d-flex flex-wrap align-items-center justify-content-between pb-2">
+        <div v-if="filterData?.countInfo" class="table-count-info w-100 d-flex align-items-center mb-2">
+          <span class="fs-14 border-end text-right pr-2">
+            {{ $t('total') }}: {{ filters.filterMoney(filterData.countInfo?.TotalCount) }}
+          </span>
+          <span class="fs-14 border-end text-right pr-2 ml-2">
+            {{ $t('table.totalSum') }}: {{ filters.filterMoney(filterData.countInfo?.AllAmount / 100) }}
+          </span>
+          <span class="fs-14 border-end text-right pr-2 ml-2">
+            {{ $t('table.writtenOff') }}: {{ filters.filterMoney(filterData.countInfo?.AllPayedAmount / 100) }}
+          </span>
+          <span class="fs-14 ml-2 text-right">
+            {{ $t('table.reverseSum') }}: {{ filters.filterMoney(filterData.countInfo?.AllReverseAmount / 100) }}
+          </span>
+        </div>
+
+        <TablePerPage :pagination="filterData.pagination" @emit:update="getList" />
+
+        <ExportBtn
+            ref="exportRef"
+            :rows="rows" :loadBtn="loadBtn" :text="'Транзакции'"
+            :date="filterData.startDate ? ' ' + filterData.startDate + ' - ' + filterData.endDate : null"
+            @emit:import="downloadExcel"
+        />
+      </b-card-header>
+
+      <div class="table-responsive mb-0">
+        <b-table :items="rows" :fields="fields" :busy="loading" :show-empty="!loading" hover>
+          <template #table-busy>
+            <div class="text-center text-primary my-2">
+              <b-spinner class="align-middle mr-2"></b-spinner>
+              <strong>{{$t('loading')}}...</strong>
+            </div>
+          </template>
+
+          <template #empty="scope">
+            <h6 class="text-center text-muted py-2 mb-0">{{ $t('error.noData') }}</h6>
+          </template>
+
+          <template #cell(expand)="row">
+            <i
+              @click="row.toggleDetails"
+              class="mdi cup h3"
+              :class="row.detailsShowing ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+            ></i>
+          </template>
+
+          <template #row-details="row">
+            <div class="d-flex justify-content-center">
+              <span>
+                {{ $t('epos') }}: <b class="ml-1">{{ row.item.terminalGroupName }}</b>
+              </span>
+              <span class="ml-2">
+                {{ $t('filters.branch') }}: <b class="ml-1">{{ row.item.organizationBranchName }}</b>
+              </span>
+              <span class="ml-2" v-if="row.item.transactionState === 2">
+                {{ $t('canceledDate') }}: <b class="ml-1">{{ row.item.transactionReverseDate }}</b>
+              </span>
+            </div>
+          </template>
+
+          <template v-slot:cell(fio)="{ item }">
+            <router-link 
+              class="text-primary"
+              :to="item.wclientType === 0
+                ? { name: 'MainClientsContractsView', params: { id: item.organizationDebtorId } }
+                : { name: 'MainClientsCoborrowersView', params: { id: item.organizationDebtorId }, query: { type: 2 } }"
+            >{{ item.fio }}</router-link>
+          </template>
+
+          <template v-slot:cell(actions)="{ item }">
+            <i
+              v-if="item.transactionState !== 2"
+              v-can="['reverse_transaction_action']"
+              class="mdi mdi-replay text-danger cup h3 mr-1"
+              @click="$router.push({ name: 'MainOperationsReversal', query: { refNum: item.refNum } })"
+            ></i>
+
+            <i
+              class="mdi mdi-arrow-right-circle-outline text-info cup h3"
+              @click="item.wclientType === 0 
+                ? $router.push({ name: 'MainOperationsTransactionsView', params: { id: item.transactionId } })
+                : $router.push({ name: 'MainOperationsTransactionsView', params: { id: item.transactionId }, query: { type: 2 } })
+              "
+            ></i>
+          </template>
+        </b-table>
+      </div>
+    </b-card>
+
+    <TablePagination :pagination="filterData?.pagination" @emit:change="getList" />
+  </b-col>
+</b-row>
