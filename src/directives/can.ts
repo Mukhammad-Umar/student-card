@@ -3,7 +3,7 @@ import { permissions } from '@/service/TokenService'
 const can = {
   beforeMount: (el: any, binding: any, vnode: any) => {
     const { value } = binding
-    if (value === 'all') {
+    if (value[0] === 'all') {
       return true
     } else {
       let hasPermission = false

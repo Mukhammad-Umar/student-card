@@ -7,12 +7,12 @@ import TransactionsReverseByDay from './Parts/TransactionsReverseByDay.vue';
 
 <template>
   <div>
-    <TopInfo />
+    <!-- <TopInfo />
 
     <TransactionsByDay />
 
     <TransactionsReverseByDay />
 
-    <BottomInfo />
+    <BottomInfo /> -->
   </div>
 </template>

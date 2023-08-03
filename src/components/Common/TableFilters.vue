@@ -8,11 +8,14 @@ const props = defineProps({
   noBtn: Boolean,
   expand: Boolean,
   bankList: Array,
+  statuses: Array,
   branches: Array,
   cardTypes: Array,
+  faculties: Array,
   actionList: Array,
   pushStates: Array,
   clientTypes: Array,
+  universities: Array,
   systemStates: Array,
   backgroundStatus: Array,
   transactionStates: Array,
@@ -109,7 +112,7 @@ const emit = defineEmits(['emit:search'])
               <input
                 v-model="filterData.passportInfo" type="search"
                 class="form-control input-uppercase text-uppercase"
-                v-maska data-maska="#######" :placeholder="$t('userInfo.passportNumber')"
+                v-maska data-maska="@@ #######" :placeholder="$t('userInfo.numberSeries')"
               />
             </b-col>
 
@@ -171,6 +174,30 @@ const emit = defineEmits(['emit:search'])
                 v-maska data-maska="#### ##!*!* !*!*!*!* ####"
                 :placeholder="$t('filters.cardNumber')"
               />
+            </b-col>
+            
+            <b-col v-if="filterData?.status !== undefined" class="my-2">
+              <b-form-select
+                v-model="filterData.status" id="filter-status"
+                :class="{'text-inactive': filterData.status === null}"
+                :options="statuses" value-field="id" text-field="name"
+              ></b-form-select>
+            </b-col>
+
+            <b-col v-if="filterData?.faculty !== undefined" class="my-2">
+              <b-form-select
+                v-model="filterData.faculty" id="filter-faculty"
+                :class="{'text-inactive': filterData.faculty === null}"
+                :options="faculties" value-field="id" text-field="name"
+              ></b-form-select>
+            </b-col>
+
+            <b-col v-if="filterData?.university !== undefined" class="my-2">
+              <b-form-select
+                v-model="filterData.university" id="filter-university"
+                :class="{'text-inactive': filterData.university === null}"
+                :options="universities" value-field="id" text-field="name"
+              ></b-form-select>
             </b-col>
 
             <b-col v-if="filterData?.wclientType !== undefined" class="my-2">

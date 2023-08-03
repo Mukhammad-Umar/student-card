@@ -87,7 +87,7 @@ const emit = defineEmits(['mode-changed'])
         </div>
 
         <div class="d-flex align-items-center">
-          <Language />
+          <!-- <Language /> -->
 
           <div class="ms-1 header-item d-none d-sm-flex">
             <b-button

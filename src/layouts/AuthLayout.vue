@@ -94,7 +94,7 @@
             <div class="text-center">
               <p class="mb-0">&copy; {{ new Date().getFullYear() }} 
                 <a href="https://aloqabank.uz/" target="_blank" class="text-white"> Aloqabank</a> 
-              AutoPayment</p>
+              </p>
             </div>
           </b-col>
         </b-row>

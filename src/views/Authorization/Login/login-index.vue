@@ -33,16 +33,18 @@ const rules = computed(() => {
 const $v = useVuelidate(rules, form)
 
 async function submit() {
-  $v.value.$touch()
-  if ($v.value.$invalid) return
+  // $v.value.$touch()
+  // if ($v.value.$invalid) return
 
-  try {
-    loading.value = true
-    const data = await authStore.login(form)
-    if (data?.token) await router.push({ name: 'MainDashboard' })
-  } finally {
-    loading.value = false
-  }
+  // try {
+  //   loading.value = true
+  //   const data = await authStore.login(form)
+  //   if (data?.token) {
+      await router.push({ name: 'MainDashboard' })
+  //   }
+  // } finally {
+  //   loading.value = false
+  // }
 }
 
 onMounted(() => authStore.authClearInterval())

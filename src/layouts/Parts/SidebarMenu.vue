@@ -8,33 +8,25 @@ const route: any = useRoute()
 
 const menus = computed(() => {
   return [
-    {
-      separate: true, text: t('sysUsers.menu'), 
-      permission: ['main_menu', 'client_menu', 'autopayment_menu', 'import_menu', 'report_menu', 'operation_menu'] 
-    },
-    { url: 'MainDashboard', text: t('main'), icon: 'mdi-home-outline', permission: ['main_menu'] },
-    { url: 'MainClients', text: t('menus.clients'), icon: 'mdi-account-group-outline', permission: ['client_menu'],
+    { separate: true, text: t('sysUsers.menu'), permission: ['all'] },
+    { url: 'MainDashboard', text: t('main'), icon: 'mdi-home-outline', permission: ['all'] },
+    { url: 'MainClients', text: 'Студенты', icon: 'mdi-account-multiple-outline', permission: ['all'],
       children: [
-        { url: 'MainClientsContracts', text: t('menus.payersContracts'), permission: ['client_contract_view'] },
-        { url: 'MainClientsAdd', text: t('menus.addPayCont'), permission: ['client_contract_add'] },
-        { url: 'MainClientsCoborrowers', text: t('menus.coborrowersGuarantors'), permission: ['wclient_contract_view'] },
-        { url: 'MainClientsWhite', text: t('menus.whiteList'), permission: ['client_white_list_view'] }
+        { url: 'MainStudentsContracts', text: 'Студенты и контракты', permission: ['all'] },
+        { url: 'MainClientsAdd', text: 'Добавить студента', permission: ['all'] }
       ]
     },
-    { url: 'MainImport', text: t('menus.import'), icon: 'mdi-tray-arrow-down', permission: ['import_menu'],
+    { url: 'MainCards', text: 'Выпущенные карты', icon: 'mdi-view-grid-outline', permission: ['all'] },
+    { url: 'MainImport', text: t('menus.import'), icon: 'mdi-tray-arrow-down', permission: ['all'],
       children: [
-        { url: 'MainImportData', text: t('menus.importAll'), permission: ['import_files_add'] },
-        { url: 'MainImportedFiles', text: t('menus.importedFiles'), permission: ['import_files_view'] }
+        { url: 'MainImportData', text: 'Импортировать', permission: ['all'] },
+        { url: 'MainImportedFiles', text: 'Ошибочные', permission: ['all'] }
       ]
     },
-    { separate: true, text: t('menus.system'), permission: ['org_user_system_menu'] },
-    { url: 'MainOrgs', text: t('menus.organisations'), icon: 'mdi-office-building-outline', permission: ['org_user_system_menu', 'organization_user_role_view', 'org_user_system_menu'],
-      children: [
-        // { url: 'MainOrgsTerminals', text: t('menus.terminals'), permission: ['org_user_system_menu'] },
-        { url: 'MainOrgsRoles', text: t('roles'), permission: ['organization_user_role_view'] },
-        { url: 'MainOrgsUsers', text: t('menus.users'), permission: ['org_user_system_menu'] }
-      ]
-    }
+    { separate: true, text: t('menus.system'), permission: ['all'] },
+    { url: 'MainUsers', text: 'Пользователи', icon: 'mdi-account-multiple-outline', permission: ['all'] },
+    { url: 'MainIntegration', text: 'Интеграции', icon: 'mdi-rocket-outline', permission: ['all'] },
+    { url: 'MainSystem', text: t('menus.systemSettings'), icon: 'mdi-vector-arrange-below', permission: ['all'] }
   ]
 })
 </script>
@@ -75,7 +67,7 @@ const menus = computed(() => {
                 :id="'sidebarMenu' + index"
               >
                 <ul class="nav nav-sm flex-column">
-                  <template v-for="(child, indx) in menu.children">
+                  <template v-for="(child, indx) in (menu.children as any)">
                     <li v-if="!child.children" v-can="child.permission" class="nav-item">
                       <router-link
                         :to="{ name: child.url }"

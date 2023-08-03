@@ -29,21 +29,6 @@ const data: any = ref(props.data)
               <th><span class="fw-medium">{{ index + 1 + ') ' + $t('userInfo.pinfl') }}</span></th>
               <td :class="{'text-danger': row.pnfl?.length !== 14}">{{ row.pnfl }}</td>
             </tr>
-            <tr>
-              <th><span class="fw-medium">{{ $t('filters.fio') }}</span></th>
-              <td>
-                <span>{{ row.firstName }}</span>
-                <span v-if="row?.lastName">{{ ' ' + row.lastName }}</span>
-              </td>
-            </tr>
-            <tr>
-              <th><span class="fw-medium">{{ $t('userInfo.numberSeries') }}</span></th>
-              <td :class="{'text-danger': row.passportInfo?.length !== 10}">{{ row.passportInfo }}</td>
-            </tr>
-            <tr>
-              <th><span class="fw-medium">{{ $t('filters.contract') }}</span></th>
-              <td>{{ row.loanId }}</td>
-            </tr>
           </tbody>
         </table>
       </div>

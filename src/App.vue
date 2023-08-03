@@ -11,7 +11,7 @@ const mode = localStorage.getItem('isDark') === 'true' ? 'dark' : 'light'
 if (!TokenService.deviceId.get()) TokenService.deviceId.save(generateUniqueId())
 
 onMounted(() => {
-  if (TokenService.token.get()) authStore.refreshToken()
+  // if (TokenService.token.get()) authStore.refreshToken()
 
   document.documentElement.setAttribute('data-sidebar', mode)
   document.documentElement.setAttribute('data-layout-mode', mode)
@@ -21,5 +21,3 @@ onMounted(() => {
 <template>
   <RouterView />
 </template>
-
-<style></style>

@@ -42,7 +42,7 @@ async function checkTokenValid() {
   }
 }
 
-onMounted(() => checkTokenValid())
+// onMounted(() => checkTokenValid())
 
 const userInfo = ref({})
 

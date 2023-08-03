@@ -15,6 +15,10 @@
   border-radius: 6px;
 }
 
+.text-inactive {
+  color: var(--vz-vertical-menu-sub-item-color) !important;
+}
+
 .text-uzcard {
   color: #16b1ff;
 }
@@ -60,16 +64,16 @@
 // Input placeholder
 .input-uppercase::-webkit-input-placeholder {
   /* Edge */
-  text-transform: capitalize !important;
+  text-transform: none !important;
 }
 
 .input-uppercase:-ms-input-placeholder {
   /* Internet Explorer 10-11 */
-  text-transform: capitalize !important;
+  text-transform: none !important;
 }
 
 .input-uppercase::placeholder {
-  text-transform: capitalize !important;
+  text-transform: none !important;
 }
 
 // DatePicker style

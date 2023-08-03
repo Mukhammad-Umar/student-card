@@ -42,13 +42,8 @@ async function updateAllows(wclientId: string, state: boolean) {
             <p class="text-muted mb-0">{{ $t('filters.fio') }} :</p>
           </div>
           <div class="flex-grow-1 ms-2">
-            <router-link v-if="isBorrower" class="float-end text-right"
-              :to="{ name: 'MainClientsContractsView', params: { id: payer.organizationDebtorId } }"
-            >
-              {{ payer.fio }}
-            </router-link>
-            <router-link v-else class="float-end text-right" 
-              :to="{ name: 'MainClientsCoborrowersView', params: { id: payer.wclientId }, query: { type: 2 } }"
+            <router-link class="float-end text-right"
+              :to="{ name: 'MainStudentsContractsView', params: { id: payer.organizationDebtorId } }"
             >
               {{ payer.fio }}
             </router-link>

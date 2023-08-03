@@ -331,7 +331,7 @@ export default {
     email: 'Email',
     passportIssue: 'Дата выдачи паспорта',
     passportExpiry: 'Дата истечения паспорта',
-    numberSeries: 'Серия и номер паспорта',
+    numberSeries: 'Серия и Номер Паспорта',
     passportSeries: 'Серия паспорта',
     passportNumber: 'Номер паспорта',
     pinfl: 'ПИНФЛ',

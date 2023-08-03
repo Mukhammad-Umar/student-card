@@ -1,9 +1,9 @@
 {
-  "name": "vite-ts",
+  "name": "student-card",
   "version": "1.0.3",
   "private": true,
   "scripts": {
-    "dev": "vite --port 3330",
+    "dev": "vite --port 3333",
     "build": "run-p type-check build-only",
     "preview": "vite preview",
     "build-only": "vite build",

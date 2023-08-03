@@ -121,10 +121,8 @@ const emit = defineEmits(['emit:client'])
 
           <b-button
             variant="info" class="mb-1 ml-2"
-            v-if="route.name !== 'MainClientsContractsView' && route.name !== 'MainClientsCoborrowersView'" 
-            :to="info.wclientType === 0
-              ? { name: 'MainClientsContractsView', params: { id: info.organizationDebtorId } }
-              : { name: 'MainClientsCoborrowersView', params: { id: info.organizationDebtorId }, query: { type: 2 } }"
+            v-if="route.name !== 'MainStudentsContractsView'" 
+            :to="{ name: 'MainStudentsContractsView', params: { id: info.organizationDebtorId } }"
           >
             {{ $t('goToPage') }} <i class="mdi mdi-arrow-right"></i>
           </b-button>
