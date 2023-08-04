@@ -9,24 +9,24 @@ const route: any = useRoute()
 const menus = computed(() => {
   return [
     { separate: true, text: t('sysUsers.menu'), permission: ['all'] },
-    { url: 'MainDashboard', text: t('main'), icon: 'mdi-home-outline', permission: ['all'] },
-    { url: 'MainClients', text: 'Студенты', icon: 'mdi-account-multiple-outline', permission: ['all'],
+    { url: 'MainDashboard', text: t('main'), icon: 'mdi-home-outline', permission: ['hide'] },
+    { url: 'MainStudents', text: 'Студенты', icon: 'mdi-account-multiple-outline', permission: ['all'],
       children: [
         { url: 'MainStudentsContracts', text: 'Студенты и контракты', permission: ['all'] },
-        { url: 'MainClientsAdd', text: 'Добавить студента', permission: ['all'] }
+        { url: 'MainStudentsAdd', text: 'Добавить студента', permission: ['hide'] }
       ]
     },
-    { url: 'MainCards', text: 'Выпущенные карты', icon: 'mdi-view-grid-outline', permission: ['all'] },
+    { url: 'MainCards', text: 'Выпущенные карты', icon: 'mdi-view-grid-outline', permission: ['hide'] },
     { url: 'MainImport', text: t('menus.import'), icon: 'mdi-tray-arrow-down', permission: ['all'],
       children: [
         { url: 'MainImportData', text: 'Импортировать', permission: ['all'] },
-        { url: 'MainImportedFiles', text: 'Ошибочные', permission: ['all'] }
+        { url: 'MainErrorFiles', text: 'Не импортированные', permission: ['all'] }
       ]
     },
     { separate: true, text: t('menus.system'), permission: ['all'] },
     { url: 'MainUsers', text: 'Пользователи', icon: 'mdi-account-multiple-outline', permission: ['all'] },
-    { url: 'MainIntegration', text: 'Интеграции', icon: 'mdi-rocket-outline', permission: ['all'] },
-    { url: 'MainSystem', text: t('menus.systemSettings'), icon: 'mdi-vector-arrange-below', permission: ['all'] }
+    { url: 'MainIntegration', text: 'Интеграции', icon: 'mdi-rocket-outline', permission: ['hide'] },
+    { url: 'MainSystem', text: t('menus.systemSettings'), icon: 'mdi-vector-arrange-below', permission: ['hide'] }
   ]
 })
 </script>

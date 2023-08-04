@@ -5,7 +5,7 @@ export const projectRoutes: RouteRecordRaw[] = [
     path: '/main',
     name: 'Main',
     component: () => import('@/layouts/MainLayout.vue'),
-    redirect: { name: 'MainDashboard' },
+    redirect: { name: 'MainStudents' },
     meta: { private: true },
     children: [
       /* ================= Main Side ================= */
@@ -26,7 +26,7 @@ export const projectRoutes: RouteRecordRaw[] = [
 
       {
         path: '/students',
-        name: 'MainClients',
+        name: 'MainStudents',
         component: () => import('@/views/Main/Students/index.vue'),
         redirect: { name: 'MainStudentsContracts' },
         children: [
@@ -52,7 +52,7 @@ export const projectRoutes: RouteRecordRaw[] = [
           },
           {
             path: 'add',
-            name: 'MainClientsAdd',
+            name: 'MainStudentsAdd',
             meta: { title: 'ClientAdd' },
             component: () => import('@/views/Main/Students/AddClient/index.vue')
           }
@@ -93,24 +93,10 @@ export const projectRoutes: RouteRecordRaw[] = [
             component: () => import('@/views/Main/Import/ImportData/index.vue')
           },
           {
-            path: '',
-            name: 'MainImported',
-            component: () => import('@/views/Main/Import/ImportedFiles/index.vue'),
-            redirect: { name: 'MainImportedFiles' },
-            children:[
-              {
-                path: "files",
-                name: "MainImportedFiles",
-                meta: { title: 'ImportedFiles' },
-                component: () => import("@/views/Main/Import/ImportedFiles/Files/index.vue")
-              },
-              {
-                path: "view/:id",
-                name: "MainImportView",
-                meta: { title: 'View' },
-                component: () => import("@/views/Main/Import/ImportedFiles/View/index.vue"),
-              }
-            ]
+            path: 'error',
+            name: 'MainErrorFiles',
+            meta: { title: 'ErrorFiles' },
+            component: () => import('@/views/Main/Import/ErrorFiles/index.vue')
           }
         ]
       },

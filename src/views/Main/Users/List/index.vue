@@ -85,7 +85,7 @@ onMounted(async () => {
             @emit:update="getList"
           />
 
-          <b-button variant="info" :to="{ name: 'MainSettingsAdminAdd' }">
+          <b-button variant="info" :to="{ name: 'MainUsersAdd' }">
             {{ $t('add') }} <i class="mdi mdi-plus"></i>
           </b-button>
         </b-card-header>
@@ -139,7 +139,7 @@ onMounted(async () => {
                   class="mdi mdi-pencil-outline text-info cup h3 ml-1"
                   @click="
                     $router.push({
-                      name: 'MainSettingsAdminEdit',
+                      name: 'MainUsersEdit',
                       params: { id: item.userId },
                     })
                   "

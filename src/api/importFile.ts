@@ -1,6 +1,6 @@
 import { api } from '@/plugins/axios'
 
-const importPath = 'api-file/ImportAutopaymentFiles'
+const importPath = 'student_data_xls'
 
 export async function getBranches() {
   const { data } = await api.get(importPath + '/Branches')
@@ -18,6 +18,6 @@ export async function getActionStates() {
 }
 
 export async function importFile(payload: any) {
-  const { data } = await api.post(importPath + '/ImportFile', payload)
+  const { data } = await api.post(importPath + '/load_data/', payload)
   return data
 }

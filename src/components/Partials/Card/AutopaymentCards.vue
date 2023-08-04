@@ -2,14 +2,12 @@
 import { useRoute } from 'vue-router'
 import { useCardStore } from '@/stores/card'
 import { onMounted, reactive, ref, watch } from 'vue'
-import { useCoborrowerCardStore } from '@/stores/coborrowerCard'
 
 import TheCard from './TheCard.vue'
 import SimpleLoader from '@/components/Common/SimpleLoader.vue'
 
 const props = defineProps({
   client: Object,
-  cardsRefresh: Number,
   integrationSystemId: Number
 })
 
@@ -18,7 +16,6 @@ const route = useRoute()
 const humoCards = ref([])
 const deletedCards = ref([])
 const cardStore = useCardStore()
-const coborrowerCardStore = useCoborrowerCardStore()
 
 const cardLoaders = reactive({
   uzCardLoad: true,
@@ -28,22 +25,12 @@ const cardLoaders = reactive({
   deletedLoad: true
 })
 
-watch(() => props.cardsRefresh, () => {
-  getUzCards()
-  getHumo()
-})
-
 async function getUzCards() {
   try {
     uzCards.value = []
     cardLoaders.uzCardLoad = true
-    const data = route.query?.type
-      ? await coborrowerCardStore.getCards({
-        organizationDebtorId: route.params.id,
-        integrationSystemId: props.integrationSystemId,
-        cardGateType: 0
-      })
-      : await cardStore.getCards({
+    const data = 
+      await cardStore.getCards({
         organizationDebtorId: route.params.id,
         integrationSystemId: props.integrationSystemId,
         cardGateType: 0
@@ -57,13 +44,8 @@ async function getHumo() {
   try {
     humoCards.value = []
     cardLoaders.humoLoad = true
-    const data = route.query?.type
-      ? await coborrowerCardStore.getCards({
-        organizationDebtorId: route.params.id,
-        integrationSystemId: props.integrationSystemId,
-        cardGateType: 1
-      })
-      : await cardStore.getCards({
+    const data = 
+      await cardStore.getCards({
         organizationDebtorId: route.params.id,
         integrationSystemId: props.integrationSystemId,
         cardGateType: 1
@@ -77,12 +59,8 @@ async function getDeletedCards() {
   try {
     deletedCards.value = []
     cardLoaders.deletedLoad = true
-    const data = route.query?.type
-    ? await coborrowerCardStore.getBlockedCards({
-      organizationDebtorId: route.params.id,
-      integrationSystemId: props.integrationSystemId
-    })
-    : await cardStore.getBlockedCards({
+    const data = 
+    await cardStore.getBlockedCards({
       organizationDebtorId: route.params.id,
       integrationSystemId: props.integrationSystemId
     })

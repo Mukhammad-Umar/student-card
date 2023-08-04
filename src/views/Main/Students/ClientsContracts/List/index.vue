@@ -18,25 +18,24 @@ const { t } = useI18n()
 const branchStore = useBranchStore()
 const clientStore = useClientStore()
 
-const rows = ref([])
+const rows: any = ref([])
 const branches = ref([])
 const loading = ref(true)
 const loadBtn = ref(false)
 const exportRef: any = ref(null)
 const numerationIndex = ref(1)
-const statuses = ref([{ id: null, name: 'Статус', disabled: true }])
-const faculties = ref([{ id: null, name: 'Факультет/Отделение', disabled: true }])
+const statuses = ref([{ id: null, name: 'Статус студента', disabled: true }])
 const universities = ref([{ id: null, name: 'Название ВУЗа', disabled: true }])
 
 const fields = computed(() => [
   { key: 'index', label: '№', class: 'text-center' },
   { key: 'pinfl', label: t('filters.pinfl') },
-  { key: 'fio', label: t('filters.fio') },
-  { key: 'university', label: 'Название Вуза', class: 'text-center' },
-  { key: 'passportInfo', label: t('userInfo.numberSeries'), class: 'text-center',
+  { key: 'firstname', label: t('filters.fio') },
+  { key: 'university_name', label: 'Название Вуза', class: 'text-center' },
+  { key: 'serial_number', label: t('userInfo.numberSeries'), class: 'text-center',
     formatter: (value: any) => value?.substring(0, 2) + ' ' + value?.slice(2) },
-  { key: 'faculty', label: 'Факультет/Отделение', class: 'text-center' },
-  { key: 'status', label: 'Статус', class: 'text-center' },
+  { key: 'student_type_code', label: 'Выпуск карты', class: 'text-center' },
+  { key: 'status_code', label: 'Статус студента', class: 'text-center' },
   { key: 'actions', label: t('filters.action'), class: 'text-center' }
 ])
 
@@ -54,10 +53,9 @@ async function getClients() {
     const data = await clientStore.getClients({
       Fio: props.filterData?.fio,
       Pinfl: props.filterData?.pinfl || null,
-      ContractLoanId: props.filterData?.contractLoanId,
       PassportInfo: props.filterData?.passportInfo?.replace(/\s/g, '') || null,
-      CurrentPage: props.filterData?.pagination.page,
-      PerPage: props.filterData?.pagination.rowsPerPage
+      // CurrentPage: props.filterData?.pagination.page,
+      // PerPage: props.filterData?.pagination.rowsPerPage
     })
 
     rows.value = data

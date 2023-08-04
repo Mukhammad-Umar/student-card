@@ -44,7 +44,7 @@ async function submit() {
 
     if (data.result) {
       toast.success(t('success.added'))
-      router.push({ name: 'MainSettingsAdminList' })
+      router.push({ name: 'MainUsersList' })
     }
   } finally {
     loading.value = false

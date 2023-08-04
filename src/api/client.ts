@@ -1,9 +1,9 @@
 import { api } from '@/plugins/axios'
 
-const admin = 'api-debtor/OrganizationDebtorContracts'
+const admin = 'student_data_hemis'
 
 export async function getClients(payload: any) {
-  const data = await api.get(admin + '/Get', {
+  const data = await api.get(admin + '/students/', {
     params: payload
   })
   return data
@@ -14,47 +14,8 @@ export async function addClientContract(payload: any) {
   return data
 }
 
-export async function checkPinfl(pinfl: string) {
-  const { data } = await api.get(admin + `/GetClientByPinfl/${pinfl}`)
-  return data
-}
-
 export async function getById(id: any) {
-  const { data } = await api.get(admin + `/Get/${id}`)
-  return data
-}
-
-export async function getExcludeClient(organizationDebtorId: string) {
-  const { data } = await api.get(admin + `/CheckExcludedDebtor/${organizationDebtorId}`)
-  return data
-}
-
-export async function getContracts(payload: any) {
-  const data = await api.get(admin + '/GetContracts', {
-    params: payload
-  })
-  return data
-}
-
-export async function getTransactions(payload: any) {
-  const data = await api.get(admin + '/GetTransactions', {
-    params: payload
-  })
-  return data
-}
-
-export async function getTerminalGroups(organizationBranchId: number) {
-  const { data } = await api.get(admin + `/GetTerminalGroups?organizationBranchId=${organizationBranchId}`)
-  return data
-}
-
-export async function getWClients(contractId: string) {
-  const { data } = await api.get(admin + `/GetWClients/${contractId}`)
-  return data
-}
-
-export async function updateWClientState(payload: any) {
-  const { data } = await api.patch(admin + `/UpdateWClientState/?wclientId=${payload.wclientId}&state=${payload.state}`)
+  const { data } = await api.get(admin + `/students/${id}/`)
   return data
 }
 

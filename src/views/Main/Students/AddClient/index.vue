@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { useToast } from 'vue-toastification'
 import { useClientStore } from '@/stores/client'
 import { useBranchStore } from '@/stores/branch'
-import { useTerminalStore } from '@/stores/terminal'
-import { ref, onMounted, watch, computed } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 
 import { useVuelidate } from '@vuelidate/core'
 import { required, minLength } from '@/utils/i18n-validators'
@@ -14,18 +13,12 @@ import BranchSelect from '@/components/UI/BranchSelect.vue'
 
 const { t } = useI18n()
 const toast = useToast()
-const route = useRoute()
 const router = useRouter()
 const userStore: any = useUserStore()
 const clientStore = useClientStore()
 const branchStore = useBranchStore()
-const terminalStore = useTerminalStore()
 
 const loading = ref(false)
-const groups: any = ref([])
-const modalShow = ref(false)
-const pinflLoad = ref(false)
-const selectedGroup: any = ref(null)
 
 const form: any = ref({
   pinfl: '',
@@ -33,9 +26,9 @@ const form: any = ref({
   lastName: '',
   middleName: '',
   passportInfo: '',
-  loanId: '',
+  phoneNumber: '',
+  studentId: '',
   organizationBranchId: null as null | number,
-  terminalGroupId: null as null | number
 })
 
 const rules = computed(() => {
@@ -44,54 +37,17 @@ const rules = computed(() => {
     firstName: { required },
     lastName: { required },
     passportInfo: { required },
-    loanId: { required },
+    phoneNumber: { required },
+    studentId: { required },
     organizationBranchId: { required },
-    terminalGroupId: { required }
   }
 })
 
 const $v = useVuelidate(rules, form.value)
 
-watch(() => form.value.terminalGroupId, val => {
-  if (val) selectedGroup.value = groups.value.filter((group: any) => group.id === val)[0].name
-})
-
-watch(() => form.value.organizationBranchId, val => {
-  selectedGroup.value = null
-  form.value.terminalGroupId = null
-  getTerminalGroups(val || 0)
-})
-
 async function getOwnBranchId() {
   const data = await branchStore.getOwnBranchId()
   if (data?.id) form.value.organizationBranchId = data?.id
-}
-
-async function getTerminalGroups(id: number) {
-  const data = await clientStore.getTerminalGroups(id)
-  groups.value = data?.result
-}
-
-async function checkPinfl() {
-  if (form.value?.pinfl?.length === 14) {
-    try {
-      pinflLoad.value = true
-      const data = await clientStore.checkPinfl(form.value.pinfl)
-
-      if (data?.result) {
-        form.value.firstName = data.result.firstName
-        form.value.lastName = data.result.lastName
-        form.value.middleName = data.result.middleName
-        form.value.passportInfo = data.result.passportSeries + ' ' + data.result.passportNumber
-        pinflLoad.value = false
-      } else {
-        pinflLoad.value = false
-        toast.error(t('error.noSuchPinfl'))
-      }
-    } catch (e) {
-      pinflLoad.value = false
-    }
-  }
 }
 
 async function submit() {
@@ -119,10 +75,6 @@ async function submit() {
 
 onMounted(async () => {
   await getOwnBranchId()
-  if (route.query.pinfl) {
-    form.value.pinfl = route.query.pinfl.toString()
-    await checkPinfl()
-  }
 })
 </script>
 
@@ -136,24 +88,6 @@ onMounted(async () => {
           </b-card-header>
           <b-card-body>
             <b-row class="g-4">
-              <b-col lg="4">
-                <div>
-                  <label for="addClient-pinfl" class="form-label">{{ $t('userInfo.pinfl') }} <span class="text-danger">*</span></label>
-                  <b-input-group>
-                    <template #append>
-                      <b-input-group-text @click="checkPinfl" class="cup">
-                        <i class="mdi mdi-send-check-outline h5 mb-0 text-info"></i>
-                      </b-input-group-text>
-                    </template>
-                    <b-form-input
-                      v-model="$v.pinfl.$model" class="form-control" id="addClient-pinfl" 
-                      v-maska data-maska="##############" @keydown.enter="checkPinfl" type="text"
-                      :class="{ 'is-invalid': $v.pinfl.$error && $v.pinfl.$dirty, error: $v.pinfl.$error }"
-                    ></b-form-input>
-                  </b-input-group>
-                </div>
-              </b-col>
-
               <b-col lg="4">
                 <div>
                   <label for="addClient-lastName" class="form-label">{{ $t('userInfo.lastName') }} <span class="text-danger">*</span></label>
@@ -183,12 +117,38 @@ onMounted(async () => {
 
               <b-col lg="4">
                 <div>
+                  <label for="addClient-pinfl" class="form-label">{{ $t('userInfo.pinfl') }} <span class="text-danger">*</span></label>
+                  <input
+                    v-model="$v.pinfl.$model" type="text" id="addClient-pinfl" 
+                    class="form-control" v-maska data-maska="##############"
+                    :class="{ 'is-invalid': $v.pinfl.$error && $v.pinfl.$dirty, error: $v.pinfl.$error }"
+                  />
+                </div>
+              </b-col>
+
+              <b-col lg="4">
+                <div>
                   <label for="addClient-passport" class="form-label">{{ $t('userInfo.numberSeries') }} <span class="text-danger">*</span></label>
                   <input
                     type="text" class="form-control text-uppercase" id="addClient-passport"
                     v-model.trim="$v.passportInfo.$model" v-maska data-maska="@@ #######"
                     :class="{ 'is-invalid': $v.passportInfo.$error && $v.passportInfo.$dirty, error: $v.passportInfo.$error }"
                   />
+                </div>
+              </b-col>
+
+              <b-col lg="4">
+                <div>
+                  <label for="addClient-passport" class="form-label">{{ $t('userInfo.phoneNumber') }} <span class="text-danger">*</span></label>
+
+                  <div class="input-group">
+                    <span class="input-group-text">+998</span>
+                    <input
+                      v-model="$v.phoneNumber.$model" class="form-control"
+                      v-maska data-maska="## ###-##-##" type="search" aria-label="Username"
+                      :class="{ 'is-invalid': $v.phoneNumber.$error && $v.phoneNumber.$dirty, error: $v.phoneNumber.$error }"
+                    />
+                  </div>
                 </div>
               </b-col>
             </b-row>
@@ -201,10 +161,10 @@ onMounted(async () => {
             <b-row class="g-4">
               <b-col lg="4">
                 <div>
-                  <label for="addClient-contract" class="form-label">{{ $t('userInfo.contractId') }} <span class="text-danger">*</span></label>
+                  <label for="addClient-contract" class="form-label">ID студента <span class="text-danger">*</span></label>
                   <input
-                    v-model="$v.loanId.$model" id="addClient-contract" type="text" class="form-control"
-                    :class="{ 'is-invalid': $v.loanId.$error && $v.loanId.$dirty, error: $v.loanId.$error}"
+                    v-model="$v.studentId.$model" id="addClient-contract" type="text" class="form-control"
+                    :class="{ 'is-invalid': $v.studentId.$error && $v.studentId.$dirty, error: $v.studentId.$error}"
                   />
                 </div>
               </b-col>
@@ -213,18 +173,6 @@ onMounted(async () => {
                 <div>
                   <label class="form-label">{{ $t('userInfo.branch') }} <span class="text-danger">*</span></label>
                   <BranchSelect :params="form" :notClear="true" />
-                </div>
-              </b-col>
-
-              <b-col lg="4">
-                <div>
-                  <label for="addClient-epos" class="form-label">
-                    {{ $t('userInfo.epos') }} <span class="text-danger">*</span>
-                  </label>
-                  <b-form-input
-                    :model-value="selectedGroup" readonly id="addClient-epos" @click="modalShow = true"
-                    :class="{ 'is-invalid': $v.terminalGroupId.$error && $v.terminalGroupId.$dirty, error: $v.terminalGroupId.$error}"
-                  ></b-form-input>
                 </div>
               </b-col>
 
@@ -239,50 +187,5 @@ onMounted(async () => {
         </b-form>
       </b-card>
     </b-col>
-
-    <b-modal
-      v-model="modalShow"
-      class="v-modal-custom epos-select-modal" centered
-      hide-footer :title="$t('chooseEpos')"
-    >
-      <div v-if="groups.length" class="w-100 px-1">
-        <b-row
-          v-for="group in groups" :key="group.id"
-          @click="form.terminalGroupId = group.id" :class="{'active': form.terminalGroupId === group.id}"
-          class="list-group list-group-dialog justify-content-around pb-1 pt-3 position-relative flex-row cup"
-        >
-          <p class="absolute-group-name position-absolute w-auto">{{ group.name }}</p>
-
-          <b-col
-            v-for="terminal in group.terminals" :key="terminal.id"
-            lg="6" md="6" sm="12" class="draggable-items row mb-2 position-relative"
-          >
-            <div class="draggable-items__box d-flex flex-column justify-content-center w-100 px-2 py-1">
-              <div class="d-flex justify-content-between align-items-center">
-                <span>{{ $t('epos') }}: </span>
-                <span class="text-right">{{ terminal.name?.replace(';', ' ') }}</span>
-              </div>
-              <div class="d-flex justify-content-between align-items-center">
-                <span>{{ $t('filters.terminalId') }}: </span>
-                <span>{{ terminal.terminalId }}</span>
-              </div>
-              <div class="d-flex justify-content-between align-items-center">
-                <span>{{ $t('filters.merchantId') }}: </span>
-                <span>{{ terminal.merchantId }}</span>
-              </div>
-            </div>
-          </b-col>
-        </b-row>
-      </div>
-
-      <div v-else class="d-flex justify-content-center w-100 mb-2">
-        <span class="text-muted">Нет терминала</span>
-      </div>
-      <div class="modal-footer v-modal-footer justify-content-center">
-        <b-button type="button" class="px-5" variant="warning" @click="modalShow = false"
-          >{{ $t('btn_text.close') }}
-        </b-button>
-      </div>
-    </b-modal>
   </b-row>
 </template>

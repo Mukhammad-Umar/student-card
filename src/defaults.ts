@@ -1,16 +1,16 @@
 /*____________________ Server ____________________*/
-export const URL_BASE = '/';
-export const URL_IMG = '/files/';
+// export const URL_BASE = '/';
+// export const URL_IMG = '/files/';
 
 
 /*____________________ Test Global ____________________*/
-// export const URL_BASE = 'http://172.22.6.21:2043/'
-// export const URL_IMG = 'http://172.22.6.21:2043/files/'
+export const URL_BASE = 'http://100.67.202.225:8000/'
+export const URL_IMG = 'http://100.67.202.225:8000/files/'
 
 
 /*____________________ Test Local ____________________*/
-// export const URL_BASE = 'http://172.22.6.21:5050/';
-// export const URL_IMG = 'http://172.22.6.21:5050/files/';
+// export const URL_BASE = 'http://100.67.202.225:8000/'
+// export const URL_IMG = 'http://100.67.202.225:8000/files/'
 
 
 // export const LANG = navigator.language.substr(0, 2).toLowerCase() || 'ru';

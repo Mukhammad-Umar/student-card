@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import { read, utils } from 'xlsx'
-import { Moment } from '@/plugins/moment'
 import { useToast } from 'vue-toastification'
 import { useFilesStore } from '@/stores/files'
 import { useImportFileStore } from '@/stores/importFile'
@@ -46,11 +45,8 @@ const resultQuery = computed(() => {
     const search = filterData.search.toLowerCase()
     const filteredData = excelData.value.filter((data: any) => {
       return (
-        data.pnfl?.toLowerCase().includes(search) ||
-        data.firstName?.toLowerCase().includes(search) ||
-        data.passportInfo?.toString().toLowerCase().includes(search) ||
-        data.loanId?.toString().toLowerCase().includes(search) ||
-        data.cardNumber?.toString().toLowerCase().includes(search)
+        data.pinfl?.includes(search) ||
+        data.cli_code?.includes(search)
       )
     })
 
@@ -112,17 +108,17 @@ const importExcel = async (event: any) => {
           excelData.value[i].id = i
 
           if (excelData.value[i]['ПИНФЛ']) {
-            excelData.value[i].pnfl = excelData.value[i]['ПИНФЛ'].toString().trim()
+            excelData.value[i].pinfl = excelData.value[i]['ПИНФЛ'].toString().trim()
             delete excelData.value[i]['ПИНФЛ']
           }
 
           if (excelData.value[i]['CLI_CODE']) {
-            excelData.value[i].cliCode = excelData.value[i]['CLI_CODE'].toString().trim()
+            excelData.value[i].cli_code = excelData.value[i]['CLI_CODE'].toString().trim()
             delete excelData.value[i]['CLI_CODE']
           }
 
           if (excelData.value[i]['BIRDATE']) {
-            excelData.value[i].birDate = excelData.value[i]['BIRDATE'].toString().trim()
+            excelData.value[i].dob = excelData.value[i]['BIRDATE'].toString().trim()
             delete excelData.value[i]['BIRDATE']
           }
         }
@@ -173,9 +169,9 @@ const extractMissing = async () => {
   importingData.value = []
 
   for (let i = 0; i < excelData.value.length; i++) {
-    let checkPnfl = /^\d+$/.test(excelData.value[i].pnfl)
+    let checkPnfl = /^\d+$/.test(excelData.value[i].pinfl)
 
-    if (excelData.value[i].pnfl && excelData.value[i].pnfl.length === 14 && checkPnfl) {
+    if (excelData.value[i].pinfl && excelData.value[i].pinfl.length === 14 && checkPnfl) {
       excelData.value[i].isImported = true
       importingData.value.push(excelData.value[i])
     } else {
@@ -185,27 +181,20 @@ const extractMissing = async () => {
   }
 }
 
-async function addFile() {
-  if (importingData.value.length) {
-    const data = await filesStore.addFile(formData.value)
-    await submit(data?.result.path.slice(1), data?.result.fileName)
-  } else {
-    toast.error('Нет данных для импорта')
-  }
-}
-
-async function submit(filePath: string, fileName: string) {
+async function submit() {
   try {
     modalLoading.value = true
 
-    let params = JSON.parse(JSON.stringify(importingData.value))
-    
-    const data = await importFileStore.importFile({
-      filePath: filePath,
-      fileName: fileName,
-      folderNameId: 1,
-      rows: params
+    let params: any = []
+    importingData.value.map((data: any) => {
+      params.push({
+        pinfl: data.pinfl,
+        cli_code: data.cli_code,
+        dob: data.dob?.split('.').reverse().join('-')
+      })
     })
+
+    const data = await importFileStore.importFile(params)
 
     if (data?.result) {
       clearFile()
@@ -352,9 +341,9 @@ onMounted(async () => {
             <table class="table table-nowrap align-middle" id="orderTable">
               <thead class="text-muted table-light">
                 <tr>
-                  <th class="sort" data-sort="cliCode">Код клиента</th>
-                  <th class="sort text-center" data-sort="pnfl">ПИНФЛ</th>
-                  <th class="sort text-center" data-sort="birDate">Дата рождение</th>
+                  <th class="sort" data-sort="cli_code">Код клиента</th>
+                  <th class="sort text-center" data-sort="pinfl">ПИНФЛ</th>
+                  <th class="sort text-center" data-sort="birthDate">Дата рождение</th>
                   <th class="sort text-center" data-sort="isImported">Статус</th>
                 </tr>
               </thead>
@@ -375,12 +364,12 @@ onMounted(async () => {
                   :key="index"
                 >
                   <tr>
-                    <td class="cliCode text-center">{{ row.cliCode }}</td>
-                    <td class="pnfl text-center">{{ row.pnfl }}</td>
-                    <td class="birDate text-center">{{ row.birDate }}</td>
+                    <td class="cli_code text-center">{{ row.cli_code }}</td>
+                    <td class="pinfl text-center">{{ row.pinfl }}</td>
+                    <td class="birthDate text-center">{{ row.dob }}</td>
                     <td class="isImported text-center text-uppercase">
-                      <b-badge v-if="row.isImported" variant="success" class="fs-10">Импортируемый</b-badge>
-                      <b-badge v-else variant="danger" class="fs-10">Не импортируемый</b-badge>
+                      <b-badge v-if="row.isImported" variant="success" class="fs-11">Импортируемый</b-badge>
+                      <b-badge v-else variant="danger" class="fs-11">Не импортируемый</b-badge>
                     </td>
                   </tr>
                 </tbody>
@@ -408,7 +397,7 @@ onMounted(async () => {
       :modals="modals"
       :loading="modalLoading"
       @emit:close="modals.modal = false"
-      @emit:success="addFile"
+      @emit:success="submit"
     >
       {{ $t('totalImporting') }}: {{ excelData.length - missingData.length }}
     </MakeSureDialog>

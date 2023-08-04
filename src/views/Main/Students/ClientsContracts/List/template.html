@@ -1,11 +1,10 @@
 <b-row class="table-list mb-3">
   <b-col>
-    <TableFilters 
-      :filterData="filterData" 
-      :statuses="statuses" 
-      :faculties="faculties" 
-      :universities="universities" 
-      @emit:search="getClients" 
+    <TableFilters
+      :filterData="filterData"
+      :statuses="statuses"
+      :universities="universities"
+      @emit:search="getClients"
     />
 
     <b-card no-body class="card-box-shadow">
@@ -21,8 +20,8 @@
           />
 
           <b-button 
-            class="ml-2" variant="info" 
-            @click="$router.push({ name: 'MainClientsAdd' })" 
+            class="ml-2" variant="info" v-can="['hide']"
+            @click="$router.push({ name: 'MainStudentsAdd' })" 
           >
             {{ $t('add') }} <i class="mdi mdi-plus"></i>
           </b-button>
@@ -47,10 +46,22 @@
               class="text-primary"
               :to="{
                   name: 'MainStudentsContractsView',
-                  params: { id: item.organizationDebtorId }
+                  params: { id: item.id }
                 }"
               >{{ item.pinfl }}
             </router-link>
+          </template>
+
+          <template v-slot:cell(firstname)="{ item }">
+            <span>{{ item.lastname + ' ' + item.firstname + ' ' + item.fathername }}</span>
+          </template>
+
+          <template v-slot:cell(student_type_code)="{ item }">
+            <b-badge variant="success" class="fs-11">{{ item.student_type_name }}</b-badge>
+          </template>
+
+          <template v-slot:cell(status_code)="{ item }">
+            <b-badge variant="success" class="fs-11">{{ item.status_name }}</b-badge>
           </template>
 
           <template v-slot:cell(actions)="{ item }">
@@ -59,7 +70,7 @@
               @click="
                   $router.push({
                     name: 'MainStudentsContractsView',
-                    params: { id: item.organizationDebtorId }
+                    params: { id: item.pinfl }
                   })
                 "
             ></i>

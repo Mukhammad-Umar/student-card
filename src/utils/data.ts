@@ -1,6 +1,6 @@
 export const staticMenus = [
   { key: 'main_menu', title: 'Главная' },
-  { key: 'client_menu', title: 'Заемщики' },
+  { key: 'client_menu', title: 'Студенты' },
   { key: 'autopayment_menu', title: 'Автоплатежи' },
   { key: 'import_menu', title: 'Импорт' },
   { key: 'report_menu', title: 'Отчеты' },
@@ -11,7 +11,7 @@ export const staticMenus = [
 ]
 
 export const staticFunctionals = [
-  { key: 'client_contract_view', value: 'Заемщики и договоры' },
+  { key: 'client_contract_view', value: 'Студенты и договоры' },
   { key: 'client_contract_add', value: 'Добавить заем. и договоры' },
   { key: 'client_contract_edit', value: 'Изменить заем. и договоры' },
   { key: 'client_contract_remove', value: 'Удалить заем. и договоры' },

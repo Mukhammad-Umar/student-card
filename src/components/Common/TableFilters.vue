@@ -11,7 +11,6 @@ const props = defineProps({
   statuses: Array,
   branches: Array,
   cardTypes: Array,
-  faculties: Array,
   actionList: Array,
   pushStates: Array,
   clientTypes: Array,
@@ -175,28 +174,20 @@ const emit = defineEmits(['emit:search'])
                 :placeholder="$t('filters.cardNumber')"
               />
             </b-col>
-            
-            <b-col v-if="filterData?.status !== undefined" class="my-2">
-              <b-form-select
-                v-model="filterData.status" id="filter-status"
-                :class="{'text-inactive': filterData.status === null}"
-                :options="statuses" value-field="id" text-field="name"
-              ></b-form-select>
-            </b-col>
-
-            <b-col v-if="filterData?.faculty !== undefined" class="my-2">
-              <b-form-select
-                v-model="filterData.faculty" id="filter-faculty"
-                :class="{'text-inactive': filterData.faculty === null}"
-                :options="faculties" value-field="id" text-field="name"
-              ></b-form-select>
-            </b-col>
 
             <b-col v-if="filterData?.university !== undefined" class="my-2">
               <b-form-select
                 v-model="filterData.university" id="filter-university"
                 :class="{'text-inactive': filterData.university === null}"
                 :options="universities" value-field="id" text-field="name"
+              ></b-form-select>
+            </b-col>
+
+            <b-col v-if="filterData?.status !== undefined" class="my-2">
+              <b-form-select
+                v-model="filterData.status" id="filter-status"
+                :class="{'text-inactive': filterData.status === null}"
+                :options="statuses" value-field="id" text-field="name"
               ></b-form-select>
             </b-col>
 

@@ -8,7 +8,6 @@ store.filterData = reactive({
   fio: null,
   status: null,
   pinfl: null,
-  faculty: null,
   university: null,
   passportInfo: null,
   pagination: {

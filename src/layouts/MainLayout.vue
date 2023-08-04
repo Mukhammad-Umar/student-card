@@ -80,7 +80,7 @@ onMounted(() => {
 
 <template>
   <div id="layout-wrapper">
-    <ProjectContributors v-if="showContributors" @emit:close="closeContributors" />
+    <!-- <ProjectContributors v-if="showContributors" @emit:close="closeContributors" /> -->
 
     <Navbar @mode-changed="modeChanged" :userInfo="userInfo" />
 
@@ -91,7 +91,7 @@ onMounted(() => {
         <!-- LOGO -->
         <div class="navbar-brand-box">
           <!-- Logo-->
-          <router-link to="/" class="logo" :class="webMode ? 'logo-light' : 'logo-dark'" @click="clickCount++">
+          <router-link :to="{name: 'MainStudents'}" class="logo" :class="webMode ? 'logo-light' : 'logo-dark'" @click="clickCount++">
             <span class="logo-lg">
               <img v-if="!webMode" src="@/assets/aloqa-logo.gif" alt="Aloqabank" height="41" />
               <img v-else src="@/assets/logo-light.svg" alt="Aloqabank" height="28" />

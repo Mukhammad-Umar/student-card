@@ -40,7 +40,7 @@ async function submit() {
   //   loading.value = true
   //   const data = await authStore.login(form)
   //   if (data?.token) {
-      await router.push({ name: 'MainDashboard' })
+      await router.push({ name: 'Main' })
   //   }
   // } finally {
   //   loading.value = false
