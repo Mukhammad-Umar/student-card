@@ -7,8 +7,8 @@ export const useImportFileStore = defineStore('importFile', () => {
     return data
   }
 
-  async function getTerminalGroups(organizationBranchId: number) {
-    const data = await api.getTerminalGroups(organizationBranchId)
+  async function getImportedFiles(payload: any) {
+    const data = await api.getImportedFiles(payload)
     return data
   }
 
@@ -24,7 +24,7 @@ export const useImportFileStore = defineStore('importFile', () => {
 
   return {
     getBranches,
-    getTerminalGroups,
+    getImportedFiles,
     getActionStates,
     importFile,
   }

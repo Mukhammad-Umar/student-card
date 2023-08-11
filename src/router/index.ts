@@ -18,7 +18,7 @@ const router = createRouter({
   },
 });
 
-// router.beforeEach((to, from, next) => {
+router.beforeEach((to, from, next) => {
 //   const hasToken = !!token.get();
 //   const isPrivate = to.matched.some((record) => record.meta.private);
 //   const isAuth = to.matched.some((record) => record.meta.auth);
@@ -37,14 +37,14 @@ const router = createRouter({
 //     return next({ name: 'Main' });
 //   }
 
-//   document.title = to.meta.title + ' | ' + appConfig.title;
+  document.title = to.meta.title + ' | ' + appConfig.title;
 
-//   if(document.getElementsByClassName('tooltip')[0]?.classList){
-//     document.getElementsByClassName('tooltip')[0].classList?.remove('show')
-//   }
+  if(document.getElementsByClassName('tooltip')[0]?.classList){
+    document.getElementsByClassName('tooltip')[0].classList?.remove('show')
+  }
 
-//   next();
-// });
+  next();
+});
 
 
 export default router;

@@ -4,7 +4,7 @@
 
 
 /*____________________ Test Global ____________________*/
-export const URL_BASE = 'http://100.67.202.225:8000/'
+export const URL_BASE = 'http://100.67.202.247:8000/'
 export const URL_IMG = 'http://100.67.202.225:8000/files/'
 
 

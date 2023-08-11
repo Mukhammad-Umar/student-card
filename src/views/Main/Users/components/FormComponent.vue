@@ -153,7 +153,7 @@ async function submit() {
                 {{ $t('btn_text.cancel') }}
               </b-button>
               <b-button
-                type="submit" variant="info" class="px-5"
+                type="submit" variant="primary" class="px-5"
                 :loading="loading" loading-mode="fill"
               >
                 {{ form.userId ? $t('change') : $t('add') }}

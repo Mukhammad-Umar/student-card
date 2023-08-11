@@ -93,10 +93,10 @@ export const projectRoutes: RouteRecordRaw[] = [
             component: () => import('@/views/Main/Import/ImportData/index.vue')
           },
           {
-            path: 'error',
-            name: 'MainErrorFiles',
-            meta: { title: 'ErrorFiles' },
-            component: () => import('@/views/Main/Import/ErrorFiles/index.vue')
+            path: "view/:id",
+            name: "MainImportView",
+            meta: { title: 'View' },
+            component: () => import("@/views/Main/Import/View/index.vue"),
           }
         ]
       },

@@ -35,7 +35,7 @@ const computedLogo = computed(() => {
       <div class="loader-linear">
         <b-progress
           :value="100"
-          variant="info"
+          variant="primary"
           :animated="true"
           class="mt-3"
           height="8px"

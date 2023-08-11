@@ -19,8 +19,7 @@ const menus = computed(() => {
     { url: 'MainCards', text: 'Выпущенные карты', icon: 'mdi-view-grid-outline', permission: ['hide'] },
     { url: 'MainImport', text: t('menus.import'), icon: 'mdi-tray-arrow-down', permission: ['all'],
       children: [
-        { url: 'MainImportData', text: 'Импортировать', permission: ['all'] },
-        { url: 'MainErrorFiles', text: 'Не импортированные', permission: ['all'] }
+        { url: 'MainImportData', text: 'Заявки на выпуск карт', permission: ['all'] },
       ]
     },
     { separate: true, text: t('menus.system'), permission: ['all'] },

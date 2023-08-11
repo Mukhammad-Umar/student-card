@@ -188,7 +188,7 @@ onMounted(async () => await getList())
           <b-button type="button" id="closemodal" variant="light" @click="modal = false">
             {{ $t('btn_text.close') }}
           </b-button>
-          <b-button type="submit" variant="info" :loading="modalLoading" :loading-mode="'fill'">{{
+          <b-button type="submit" variant="primary" :loading="modalLoading" :loading-mode="'fill'">{{
             $t('save')
           }}</b-button>
         </div>

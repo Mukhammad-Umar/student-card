@@ -50,17 +50,17 @@ async function getClients() {
   try {
     loading.value = true
 
-    const data = await clientStore.getClients({
+    const data: any = await clientStore.getClients({
       Fio: props.filterData?.fio,
       Pinfl: props.filterData?.pinfl || null,
       PassportInfo: props.filterData?.passportInfo?.replace(/\s/g, '') || null,
-      // CurrentPage: props.filterData?.pagination.page,
+      currentPage: props.filterData?.pagination.page,
       // PerPage: props.filterData?.pagination.rowsPerPage
     })
 
-    rows.value = data
-    props.filterData.pagination.rowsNumber = clientStore.totalPages
-    props.filterData.pagination.totalCount = clientStore.totalCount
+    rows.value = data?.results
+    props.filterData.pagination.rowsNumber = Math.ceil(data?.total / data?.page_size)
+    props.filterData.pagination.totalCount = data?.total
 
     numerationIndex.value = (props.filterData?.pagination.page - 1) * props.filterData?.pagination.rowsPerPage
     signIndex()

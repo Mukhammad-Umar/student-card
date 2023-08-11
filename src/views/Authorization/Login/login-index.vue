@@ -139,7 +139,7 @@ onMounted(() => authStore.authClearInterval())
             <b-button type="button" variant="dark" class="btn-icon ms-1"
               ><i class="ri-github-fill fs-16"></i
             ></b-button>
-            <b-button type="button" variant="info" class="btn-icon ms-1"
+            <b-button type="button" variant="primary" class="btn-icon ms-1"
               ><i class="ri-twitter-fill fs-16"></i
             ></b-button>
           </div>

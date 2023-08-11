@@ -1,405 +1,159 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-import { read, utils } from 'xlsx'
-import { useToast } from 'vue-toastification'
-import { useFilesStore } from '@/stores/files'
 import { useImportFileStore } from '@/stores/importFile'
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 
+import Moment from 'moment'
 import filters from '@/filters'
+import ImportFile from './Parts/ImportFile.vue'
 import ListFilter from '@/components/Common/TableFilters.vue'
-import NotImportDialog from '../Parts/NotImportDialog.vue'
-import MakeSureDialog from '@/components/Dialogs/MakeSureDialog.vue'
+import TablePerPage from '@/components/Common/TablePerPage.vue'
+import TablePagination from '@/components/Common/TablePagination.vue'
 
-const { t } = useI18n()
-const toast = useToast()
-const filesStore = useFilesStore()
+const files = ref([])
+const loading = ref(false)
+const numerationIndex = ref(1)
 const importFileStore = useImportFileStore()
 
-const universities = ref([{ id: null, name: 'Название ВУЗа', disabled: true }])
+const universities = ref([{ id: null, name: 'ВУЗ', disabled: true }])
 
 const filterData: any = reactive({
-  search: '',
-  univerId: null,
-  isImported: null,
+  university: null,
+  startDate: Moment(new Date()).format('YYYY-MM-DD'),
+  endDate: Moment(new Date()).format('YYYY-MM-DD'),
   pagination: {
     page: 1,
     totalCount: 0,
+    rowsNumber: 1,
     rowsPerPage: Number(localStorage.getItem('pageSize')) || 30
   }
 })
 
-const tmpData = ref([])
-const patternSize = ref(0)
-const excelData: any = ref([])
-const formData: any = ref(null)
-const missingData: any = ref([])
-const importingData: any = ref([])
+const fields = computed(() => [
+  { key: 'index', label: '№', class: 'text-center' },
+  { key: 'file_name', label: 'Файл' },
+  { key: 'firstName', label: 'Пользователь', class: 'text-center' },
+  { key: 'phone', label: 'Название Вуза', class: 'text-center' },
+  { key: 'isActivate', label: 'Факультет/Отделение', class: 'text-center' },
+  { key: 'isActivate', label: 'Кол-во записей', class: 'text-center' },
+  { key: 'isActivate', label: 'Успешно обработано', class: 'text-center' },
+  { key: 'isActivate', label: 'Статус', class: 'text-center' },
+  { key: 'created_at', label: 'Дата', class: 'text-center',
+    formatter: (val: any) => filters.filterDateAndTime(val)},
+  { key: 'actions', label: 'Действие', class: 'text-center' },
+])
 
-const loading = ref(false)
-const modalLoading = ref(false)
-const modals = reactive({ modal: false })
-
-const resultQuery = computed(() => {
-  if (filterData.search) {
-    const search = filterData.search.toLowerCase()
-    const filteredData = excelData.value.filter((data: any) => {
-      return (
-        data.pinfl?.includes(search) ||
-        data.cli_code?.includes(search)
-      )
-    })
-
-    tmpData.value = filteredData
-    return paginate(filteredData)
-  } else {
-    return paginate(excelData.value)
-  }
-})
-
-watch(() => filterData.search, () => {
-  filterData.pagination.page = 1
-})
-
-const setPages = (data: any) => {
-  filterData.pagination.totalCount = data.length
-}
-
-const paginate = (items: any) => {
-  let page = filterData.pagination.page
-  let perPage = filterData.pagination.rowsPerPage
-  let from = page * perPage - perPage
-  let to = page * perPage
-  return items.slice(from, to)
-}
-
-watch(() => resultQuery.value, () => {
-  if (filterData.search) setPages(tmpData.value)
-  else setPages(excelData.value)
-})
-
-const importExcel = async (event: any) => {
-  const file = event.target.files[0]
-
-  if (file) {
-    formData.value = null
-
-    const types = file.name.split('.')[file.name.split('.').length - 1]
-    const fileType = ['xlsx', 'xls'].some((item) => item === types)
-
-    if (!fileType) {
-      return toast.error('File type error, please select again')
-    }
-
-    formData.value = new FormData()
-    formData.value.append('FolderNameId', '1')
-    formData.value.append('Files', file)
-
-    loading.value = true
-    excelData.value = []
-
-    try {
-      let tabJson: any = await file2Xce(file)
-
-      if (tabJson && tabJson.length > 0) {
-        excelData.value = tabJson
-
-        for (let i = 0; i < excelData.value.length; i++) {
-          excelData.value[i].id = i
-
-          if (excelData.value[i]['ПИНФЛ']) {
-            excelData.value[i].pinfl = excelData.value[i]['ПИНФЛ'].toString().trim()
-            delete excelData.value[i]['ПИНФЛ']
-          }
-
-          if (excelData.value[i]['CLI_CODE']) {
-            excelData.value[i].cli_code = excelData.value[i]['CLI_CODE'].toString().trim()
-            delete excelData.value[i]['CLI_CODE']
-          }
-
-          if (excelData.value[i]['BIRDATE']) {
-            excelData.value[i].dob = excelData.value[i]['BIRDATE'].toString().trim()
-            delete excelData.value[i]['BIRDATE']
-          }
-        }
-
-        await setPages(excelData.value)
-        await extractMissing()
-        loading.value = false
-      }
-    } catch (e) {
-      loading.value = false
-    }
-  } else {
-    excelData.value = []
-    missingData.value = []
-    importingData.value = []
-  }
-}
-
-const file2Xce = (file: any) => {
-  return new Promise((resolve, reject) => {
-    let reader = new FileReader()
-
-    reader.onload = function (e: any) {
-      let data = e.target.result
-      let workbook = read(data, {
-        type: 'binary'
-      })
-      workbook.SheetNames.forEach(function (sheetName) {
-        // Here is your object
-        let XL_row_object = utils.sheet_to_json(workbook.Sheets[sheetName])
-        let json_object = JSON.parse(JSON.stringify(XL_row_object))
-        if (json_object?.length) {
-          resolve(json_object)
-        }
-      })
-    }
-
-    reader.onerror = function (ex) {
-      console.log(ex)
-    }
-
-    reader.readAsBinaryString(file)
-  })
-}
-
-const extractMissing = async () => {
-  missingData.value = []
-  importingData.value = []
-
-  for (let i = 0; i < excelData.value.length; i++) {
-    let checkPnfl = /^\d+$/.test(excelData.value[i].pinfl)
-
-    if (excelData.value[i].pinfl && excelData.value[i].pinfl.length === 14 && checkPnfl) {
-      excelData.value[i].isImported = true
-      importingData.value.push(excelData.value[i])
-    } else {
-      missingData.value.push(excelData.value[i])
-      excelData.value[i].isImported = false
-    }
-  }
-}
-
-async function submit() {
+async function getList() {
   try {
-    modalLoading.value = true
+    loading.value = true
 
-    let params: any = []
-    importingData.value.map((data: any) => {
-      params.push({
-        pinfl: data.pinfl,
-        cli_code: data.cli_code,
-        dob: data.dob?.split('.').reverse().join('-')
-      })
+    const data = await importFileStore.getImportedFiles({
+      currentPage: filterData.pagination.page,
+      perPage: filterData.pagination.rowsPerPage
     })
 
-    const data = await importFileStore.importFile(params)
+    files.value = data?.results
+    filterData.pagination.rowsNumber = Math.ceil(data?.total / data?.page_size)
+    filterData.pagination.totalCount = data?.total
 
-    if (data?.result) {
-      clearFile()
-      filterData.search = ''
-      filterData.isImported = null
-      toast.success(t("success.imported"));
-    }
-
-  } catch (e) {
-    toast.error('Произошла ошибка')
+    numerationIndex.value = (filterData?.pagination.page - 1) * filterData?.pagination.rowsPerPage
+    signIndex()
   } finally {
-    modalLoading.value = false
-    modals.modal = false
+    loading.value = false
   }
 }
 
-const clearFile = () => {
-  excelData.value = []
-  missingData.value = []
-  importingData.value = []
-  const file: any = document.querySelector('#inputGroupFile')
-  file.value = ''
+const signIndex = () => {
+  if (files.value?.length) {
+    files.value.forEach((row: any, index) => {
+      if (filterData.pagination.page === 1) row.index = index + 1
+      else row.index = numerationIndex.value + index + 1
+    })
+  }
 }
 
-const getFileStats = (url: string) => {
-  let fileBlob;
-  fetch(url).then((res) => {
-    fileBlob = res.blob();
-    return fileBlob;
-  }).then((fileBlob)=>{
-    patternSize.value = fileBlob.size / 1000
-  });
+async function downloadFile(path: string) {
+  try {
+    loading.value = true
+    const link = document.createElement('a')
+    link.href = path
+    link.setAttribute('download',`Файл.xlsx`) //any other extension
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+  } finally {
+    loading.value = false
+  }
 }
 
 onMounted(async () => {
-  // Example of usage
-  getFileStats('/excelPatterns/Template.xlsx');
+  await getList()
 })
 </script>
 
 <template>
   <b-row>
-    <b-col lg="8">
-      <b-card no-body class="card-box-shadow">
-        <b-card-header>
-          <h5 class="card-title mb-0">{{ $t('menus.importAll') }}</h5>
-        </b-card-header>
-        <b-card-body style="padding: 22px 16px;">
-          <b-row class="g-4">
-            <b-col lg="6">
-              <div class="input-group">
-                <input type="file" class="form-control" id="inputGroupFile" @change="importExcel" accept=".xls, .xlsx" />
-                <label
-                  v-if="excelData?.length"
-                  class="input-group-text pr-2 pl-2 pt-1 pb-1"
-                  @click="clearFile"
-                >
-                  <i class="mdi mdi-window-close fs-16"></i>
-                </label>
-                <label v-else class="input-group-text pr-2 pl-2 pt-1 pb-1" for="inputGroupFile">
-                  <i class="mdi mdi-paperclip fs-16"></i>
-                </label>
-              </div>
-            </b-col>
-
-            <b-col lg="6">
-              <b-form-select
-                v-model="filterData.univerId" id="import-univerId"
-                :class="{'text-inactive': filterData.univerId === null}"
-                :options="universities" value-field="id" text-field="name"
-              ></b-form-select>
-            </b-col>
-          </b-row>
-        </b-card-body>
-      </b-card>
-    </b-col>
-    <b-col lg="4">
-      <b-card no-body class="card-box-shadow">
-        <b-card-header>
-          <h5 class="card-title mb-0">{{ $t('templates') }}</h5>
-        </b-card-header>
-        <b-card-body>
-          <b-row class="g-4">
-            <div class="gridjs-td">
-              <span>
-                <div class="d-flex align-items-center">
-                  <div class="flex-shrink-0 me-3">
-                    <div class="avatar-sm bg-light rounded p-1 flex-center">
-                      <i class="ri-file-excel-2-line img-fluid text-success fs-24"></i>
-                    </div>
-                  </div>
-                  <div class="flex-grow-1">
-                    <h5 class="fs-14 mb-1">template.xls</h5>
-                    <p class="text-muted mb-0">{{ Math.ceil(patternSize) }} {{ $t('kb') }}</p>
-                  </div>
-                  <div class="ml-auto">
-                    <a download href="/excelPatterns/Template.xlsx">
-                      <i class="mdi mdi-download-outline fs-24 text-info"></i>
-                    </a>
-                  </div>
-                </div>
-              </span>
-            </div>
-          </b-row>
-        </b-card-body>
-      </b-card>
-    </b-col>
-
     <b-col lg="12">
-      <ListFilter :filterData="filterData" :noBtn="true" />
+      <ListFilter :filterData="filterData" :universities="universities" /> <!-- :noBtn="true" -->
     </b-col>
 
-    <b-col lg="12">
+    <b-col lg="12" class="mb-3">
       <b-card no-body class="card-box-shadow">
-        <b-card-header class="d-flex justify-content-between">
-          <div class="table-count-info d-flex align-items-center mb-1">
-            <span class="fs-14 border-end text-right pr-2">
-              {{ $t('total') }}: {{ excelData.length }}
-            </span>
-            <span class="fs-14 border-end text-right pr-2 ml-2">
-              {{ $t('importing') }}: {{ excelData.length - missingData.length }}
-            </span>
-            <span class="fs-14 border-end text-right pr-2 ml-2">
-              {{ $t('notImporting') }}: {{ missingData.length }}
-            </span>
+        <b-card-header class="d-flex justify-content-between align-items-center">
+          <h5 class="card-title mb-0">Загруженные файлы</h5>
+          <ImportFile @emit:refresh="getList"/>
+        </b-card-header>
+
+        <div class="table-responsive mb-0">
+          <div class="py-2 px-3">
+            <TablePerPage
+              :pagination="filterData.pagination"
+              @emit:update="getList"
+            />
           </div>
 
-          <div class="d-flex">
-            <template v-if="missingData.length">
-              <NotImportDialog :data="missingData" />
+          <b-table
+            :items="files"
+            :fields="fields"
+            :busy="loading"
+            :show-empty="!loading"
+            hover
+          >
+            <template #table-busy>
+              <div class="text-center text-primary my-2">
+                <b-spinner class="align-middle mr-2"></b-spinner>
+                <strong>{{ $t('loading') }}...</strong>
+              </div>
             </template>
 
-            <b-button
-              variant="success" class="mb-1"
-              :disabled="!importingData?.length"
-              @click="modals.modal = true"
-            >
-              {{ $t('import') }}
-            </b-button>
-          </div>
-        </b-card-header>
-        <b-card-body>
-          <div class="table-responsive table-card mb-1">
-            <table class="table table-nowrap align-middle" id="orderTable">
-              <thead class="text-muted table-light">
-                <tr>
-                  <th class="sort" data-sort="cli_code">Код клиента</th>
-                  <th class="sort text-center" data-sort="pinfl">ПИНФЛ</th>
-                  <th class="sort text-center" data-sort="birthDate">Дата рождение</th>
-                  <th class="sort text-center" data-sort="isImported">Статус</th>
-                </tr>
-              </thead>
+            <template #empty="scope">
+              <h6 class="text-center text-muted py-2 mb-0">
+                {{ $t('error.noData') }}
+              </h6>
+            </template>
 
-              <tbody v-if="loading">
-                <tr>
-                  <td colspan="8" class="text-center">
-                    <b-spinner variant="info" key="info" type="grow"></b-spinner>
-                  </td>
-                </tr>
-              </tbody>
+            <template v-slot:cell(actions)="{ item }">
+              <div class="d-flex justify-content-center">
+                <i
+                  v-if="item.file_to_export"
+                  v-tooltip:bottom="'Скачать'"
+                  @click="downloadFile(item.file_to_export)"
+                  class="mdi mdi-tray-arrow-down text-success cup fs-22 ml-1"
+                ></i>
 
-              <template v-else>
-                <tbody
-                  v-if="resultQuery?.length"
-                  class="list form-check-all"
-                  v-for="(row, index) of (resultQuery as any)"
-                  :key="index"
-                >
-                  <tr>
-                    <td class="cli_code text-center">{{ row.cli_code }}</td>
-                    <td class="pinfl text-center">{{ row.pinfl }}</td>
-                    <td class="birthDate text-center">{{ row.dob }}</td>
-                    <td class="isImported text-center text-uppercase">
-                      <b-badge v-if="row.isImported" variant="success" class="fs-11">Импортируемый</b-badge>
-                      <b-badge v-else variant="danger" class="fs-11">Не импортируемый</b-badge>
-                    </td>
-                  </tr>
-                </tbody>
-
-                <tbody v-else>
-                  <tr>
-                    <td colspan="9" class="text-center text-muted">{{ $t('noData') }}</td>
-                  </tr>
-                </tbody>
-              </template>
-            </table>
-          </div>
-
-          <b-pagination
-            v-model="filterData.pagination.page"
-            :total-rows="filterData.pagination.totalCount"
-            :per-page="filterData.pagination.rowsPerPage"
-            align="end" class="mb-1 mt-3"
-          ></b-pagination>
-        </b-card-body>
+                <i
+                  class="mdi mdi-arrow-right-circle-outline text-primary cup fs-22 ml-1"
+                  @click="$router.push({name: 'MainImportView', params: { id: item.id }})" 
+                ></i>
+              </div>
+            </template>
+          </b-table>
+        </div>
       </b-card>
-    </b-col>
 
-    <MakeSureDialog
-      :modals="modals"
-      :loading="modalLoading"
-      @emit:close="modals.modal = false"
-      @emit:success="submit"
-    >
-      {{ $t('totalImporting') }}: {{ excelData.length - missingData.length }}
-    </MakeSureDialog>
+      <TablePagination
+        :pagination="filterData?.pagination"
+        @emit:change="getList"
+      />
+    </b-col>
   </b-row>
 </template>

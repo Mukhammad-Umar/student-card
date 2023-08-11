@@ -45,6 +45,7 @@ npm run build
 npm run lint
 ```
 
+## VueJS version -> v^3.2.47
 ## Node version -> v18.15.0
 ## Npm version -> 9.5.0
 

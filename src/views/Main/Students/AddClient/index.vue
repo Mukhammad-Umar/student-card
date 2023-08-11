@@ -179,7 +179,7 @@ onMounted(async () => {
               <b-col lg="12">
                 <div class="hstack justify-content-center gap-2">
                   <b-button type="button" variant="warning" class="px-5" @click="$router.go(-1)">{{ $t('btn_text.cancel') }}</b-button>
-                  <b-button type="submit" variant="info" class="px-5" :loading="loading">{{ $t('add') }}</b-button>
+                  <b-button type="submit" variant="primary" class="px-5" :loading="loading">{{ $t('add') }}</b-button>
                 </div>
               </b-col>
             </b-row>

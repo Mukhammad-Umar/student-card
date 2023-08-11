@@ -300,7 +300,7 @@ const emit = defineEmits(['emit:search'])
             </b-col>
 
             <b-col v-if="!noBtn" class="my-2">
-              <b-button variant="info" type="submit" class="w-100">
+              <b-button variant="primary" type="submit" class="w-100">
                 {{ $t('search') }}
               </b-button>
             </b-col>

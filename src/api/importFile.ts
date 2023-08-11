@@ -1,14 +1,14 @@
 import { api } from '@/plugins/axios'
 
-const importPath = 'student_data_xls'
+const importPath = 'student_data_hemis'
 
 export async function getBranches() {
   const { data } = await api.get(importPath + '/Branches')
   return data
 }
 
-export async function getTerminalGroups(organizationBranchId: number) {
-  const { data } = await api.get(importPath + `/GetTerminalGroups?organizationBranchId=${organizationBranchId}`)
+export async function getImportedFiles(payload: any) {
+  const { data } = await api.get(`student_data_hemis/get_uploads/?count=${payload.currentPage}&page_size=${payload.perPage}`)
   return data
 }
 

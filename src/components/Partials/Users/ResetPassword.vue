@@ -153,7 +153,7 @@ async function changePassword() {
           <b-button type="button" id="closemodal" variant="light" @click="resetDialog = false">
             {{ $t('btn_text.close') }}
           </b-button>
-          <b-button type="submit" variant="info" :loading="resetLoading" :loading-mode="'fill'">{{
+          <b-button type="submit" variant="primary" :loading="resetLoading" :loading-mode="'fill'">{{
             $t('save')
           }}</b-button>
         </div>

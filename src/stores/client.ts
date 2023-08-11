@@ -8,17 +8,8 @@ export const useClientStore = defineStore('client', () => {
   const totalCount = ref(null)
 
   async function getClients(payload: any) {
-    const data = await api.getClients(payload)
-
-    list.value = data.data || []
-    totalPages.value = data.headers['x-pagination']
-      ? JSON.parse(data?.headers['x-pagination']).TotalPages
-      : 1
-    totalCount.value = data.headers['x-pagination']
-      ? JSON.parse(data?.headers['x-pagination']).TotalCount
-      : 1
-
-    return list.value
+    const { data } = await api.getClients(payload)
+    return data
   }
 
   async function addClientContract(payload: any) {

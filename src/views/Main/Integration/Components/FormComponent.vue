@@ -193,7 +193,7 @@ onMounted(() => getIntegrationSystemTypes())
                 <b-button
                   type="button"
                   class="px-3"
-                  variant="info"
+                  variant="primary"
                   :loading="checking"
                   @click="checkLoginPassword"
                 >
@@ -209,7 +209,7 @@ onMounted(() => getIntegrationSystemTypes())
                   <b-button
                     type="submit"
                     class="px-5"
-                    variant="info"
+                    variant="primary"
                     :loading="loading"
                     :disabled="form.integrationSystem === 1 && inactiveBtn"
                   >

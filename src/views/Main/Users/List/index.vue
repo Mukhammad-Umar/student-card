@@ -49,8 +49,7 @@ async function getList() {
     filterData.pagination.rowsNumber = adminStore.totalPages
     filterData.pagination.totalCount = adminStore.totalCount
 
-    numerationIndex.value =
-      (filterData?.pagination.page - 1) * filterData?.pagination.rowsPerPage
+    numerationIndex.value = (filterData?.pagination.page - 1) * filterData?.pagination.rowsPerPage
     signIndex()
   } finally {
     loading.value = false
@@ -85,7 +84,7 @@ onMounted(async () => {
             @emit:update="getList"
           />
 
-          <b-button variant="info" :to="{ name: 'MainUsersAdd' }">
+          <b-button variant="primary" :to="{ name: 'MainUsersAdd' }">
             {{ $t('add') }} <i class="mdi mdi-plus"></i>
           </b-button>
         </b-card-header>
@@ -111,9 +110,9 @@ onMounted(async () => {
               </h6>
             </template>
 
-            <template #cell(firstName)="{ item }">{{
-              item.lastName + ' ' + item.firstName
-            }}</template>
+            <template #cell(firstName)="{ item }">
+              {{ item.lastName + ' ' + item.firstName }}
+            </template>
 
             <template #cell(phone)="{ item }">
               {{ filters.filterFullPhoneNumber(item.phone) }}
