@@ -32,7 +32,7 @@ async function getData() {
     applicationData.value = {
       pinfl: data.pinfl,
       phone_number: data.phone_number,
-      file_name: 'import.xls',
+      file_name: data.file_name,
       file_upload_id: data.file_upload_id
     }
 

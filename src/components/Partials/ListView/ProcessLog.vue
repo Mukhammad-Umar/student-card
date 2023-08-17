@@ -44,9 +44,9 @@ onMounted(() => getList())
                 <div class="timeline-line"></div>
                 <div v-for="(processLog, index) in (processLogs as any)" class="timeline-box d-flex align-items-center">
                   <div
+                    class="timeline-box-number z-index-1 flex-center"
                     :class="processLog.current_status === 'ERROR' || processLog.current_status ===  'REJECTED' ? 'bg-text-danger' 
                     : processLog.current_status === 'PENDING_FOR_PRINT' ? 'bg-text-success' : 'bg-text-primary'" 
-                    class="timeline-box-number z-index-1 flex-center"
                   >
                     {{ index + 1 }}
                   </div>
