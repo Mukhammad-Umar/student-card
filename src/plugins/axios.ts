@@ -22,7 +22,7 @@ api.interceptors.request.use(
       : LANG
 
     if (token.get()) {
-      config.headers.Authorization = 'Bearer ' + token.get()
+      config.headers.Authorization = 'Token ' + token.get()
     }
 
     return config

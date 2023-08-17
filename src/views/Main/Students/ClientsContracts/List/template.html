@@ -12,8 +12,16 @@
         <TablePerPage :pagination="filterData.pagination" @emit:update="getClients" />
 
         <div class="d-flex justify-content-end">
+          <!-- <b-button class="mb-1" variant="primary">
+            Перезапуск реестра
+          </b-button>
+
+          <b-button class="ml-2 mb-1" variant="primary">
+            Отправить на печать
+          </b-button> -->
+
           <ExportBtn
-            ref="exportRef"
+            ref="exportRef" class="ml-2 mb-1"
             :rows="rows" :loadBtn="loadBtn"
             :text="$t('menus.payersContracts')"
             @emit:import="downloadExcel"
@@ -44,24 +52,24 @@
           <template v-slot:cell(pinfl)="{ item }">
             <router-link
               class="text-primary"
-              :to="{
-                  name: 'MainStudentsContractsView',
-                  params: { id: item.id }
-                }"
-              >{{ item.pinfl }}
+              :to="{ name: 'MainStudentsContractsView', params: { id: item.id } }"
+            >{{ item.pinfl }}
             </router-link>
           </template>
 
+          <template v-slot:cell(university_name)="{ item }">
+            <span>{{ item.university_code === '380' ? 'ТУИТ' : item.university_name }}</span>
+          </template>
+
           <template v-slot:cell(firstname)="{ item }">
-            <span>{{ item.lastname + ' ' + item.firstname + ' ' + item.fathername }}</span>
+            <span v-if="item.firstname">{{ item.lastname + ' ' + item.firstname + ' ' + item.fathername }}</span>
           </template>
 
-          <template v-slot:cell(student_type_code)="{ item }">
-            <b-badge variant="success" class="fs-11">{{ item.student_type_name }}</b-badge>
-          </template>
-
-          <template v-slot:cell(status_code)="{ item }">
-            <b-badge variant="success" class="fs-11">{{ item.status_name }}</b-badge>
+          <template v-slot:cell(status)="{ item }">
+            <b-badge class="fs-11"
+              :variant="item.status === 'PENDING_FOR_PRINT' 
+                ? 'primary' : item.status === 'REJECTED' || item.status === 'ERROR' ? 'danger' : 'success'" 
+            >{{ item.status }}</b-badge>
           </template>
 
           <template v-slot:cell(actions)="{ item }">
@@ -70,7 +78,7 @@
               @click="
                   $router.push({
                     name: 'MainStudentsContractsView',
-                    params: { id: item.pinfl }
+                    params: { id: item.id }
                   })
                 "
             ></i>

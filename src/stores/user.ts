@@ -7,13 +7,8 @@ export const useUserStore = defineStore("user", () => {
   const userInfo = ref({});
 
   async function setLoginData(payload: any) {
-    if (payload.organizationType === 0) payload.permissions.push("admin");
-
-    TokenService.token.save(payload.token);
-    TokenService.refreshToken.save(payload.refreshToken);
-    TokenService.expireTime.save(+new Date() / 1000 + payload.expirySeconds);
-    TokenService.permissions.save(payload.permissions);
-    TokenService.orgType.save(payload.organizationType);
+    userInfo.value = payload.user
+    TokenService.token.save(payload.token)
   }
 
   async function setToken(payload: any) {

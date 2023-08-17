@@ -5,19 +5,11 @@ import Multiselect from '@vueform/multiselect'
 import '@vueform/multiselect/themes/default.css'
 
 const props = defineProps({
+  users: Array,
   noBtn: Boolean,
   expand: Boolean,
-  bankList: Array,
   statuses: Array,
-  branches: Array,
-  cardTypes: Array,
-  actionList: Array,
-  pushStates: Array,
-  clientTypes: Array,
   universities: Array,
-  systemStates: Array,
-  backgroundStatus: Array,
-  transactionStates: Array,
   filterData: Object
 })
 
@@ -69,21 +61,6 @@ const emit = defineEmits(['emit:search'])
         </div>
         <form @submit.prevent="search" class="collaps show" id="collapseExample">
           <b-row class="row-cols-xxl-5 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-1 mt-2 g-3">
-            <b-col v-if="filterData?.refNum !== undefined" class="my-2">
-              <input
-                v-model="filterData.refNum" type="search"
-                class="form-control" :placeholder="$t('filters.refNum')"
-              />
-            </b-col>
-
-            <b-col v-if="filterData?.ext !== undefined" class="my-2">
-              <input
-                v-model="filterData.ext"
-                type="search" id="filter-ext"
-                class="form-control" :placeholder="$t('filters.tranExt')"
-              />
-            </b-col>
-
             <b-col v-if="filterData?.pinfl !== undefined" class="my-2">
               <input
                 v-model="filterData.pinfl"
@@ -129,31 +106,10 @@ const emit = defineEmits(['emit:search'])
               </div>
             </b-col>
 
-            <b-col v-if="filterData?.contractLoanId !== undefined" class="my-2">
+            <b-col v-if="filterData?.hemisId !== undefined" class="my-2">
               <input
-                v-model="filterData.contractLoanId" type="search"
-                class="form-control" :placeholder="$t('filters.contract')"
-              />
-            </b-col>
-
-            <b-col v-if="filterData?.terminalId !== undefined" class="my-2">
-              <input
-                v-model="filterData.terminalId" type="search"
-                class="form-control" :placeholder="$t('filters.terminalId')"
-              />
-            </b-col>
-
-            <b-col v-if="filterData?.merchantId !== undefined" class="my-2">
-              <input
-                v-model="filterData.merchantId" type="search"
-                class="form-control" :placeholder="$t('filters.merchantId')"
-              />
-            </b-col>
-
-            <b-col v-if="filterData?.autopaymentId !== undefined" class="my-2">
-              <input
-                v-model="filterData.autopaymentId" type="search"
-                class="form-control" :placeholder="$t('filters.autoPayId')"
+                v-model="filterData.hemisId" type="search"
+                class="form-control" placeholder="ID студента"
               />
             </b-col>
 
@@ -175,11 +131,17 @@ const emit = defineEmits(['emit:search'])
               />
             </b-col>
 
+            <b-col v-if="filterData?.userId !== undefined" class="my-2">
+              <b-form-select
+                v-model="filterData.userId" id="filter-userId"
+                :options="users" value-field="id" text-field="username"
+              ></b-form-select>
+            </b-col>
+
             <b-col v-if="filterData?.university !== undefined" class="my-2">
               <b-form-select
                 v-model="filterData.university" id="filter-university"
-                :class="{'text-inactive': filterData.university === null}"
-                :options="universities" value-field="id" text-field="name"
+                :options="universities" value-field="hemis_code" text-field="name"
               ></b-form-select>
             </b-col>
 
@@ -188,62 +150,6 @@ const emit = defineEmits(['emit:search'])
                 v-model="filterData.status" id="filter-status"
                 :class="{'text-inactive': filterData.status === null}"
                 :options="statuses" value-field="id" text-field="name"
-              ></b-form-select>
-            </b-col>
-
-            <b-col v-if="filterData?.wclientType !== undefined" class="my-2">
-              <b-form-select
-                v-model="filterData.wclientType" id="filter-wclientType"
-                :options="clientTypes" value-field="id" text-field="name"
-              ></b-form-select>
-            </b-col>
-
-            <b-col v-if="filterData?.organizationBranchId !== undefined" class="my-2">
-              <b-form-select
-                v-model="filterData.organizationBranchId"
-                :options="branches" value-field="id" text-field="name"
-              ></b-form-select>
-            </b-col>
-
-            <b-col v-if="filterData?.integrationSystemId !== undefined" class="my-2">
-              <b-form-select
-                v-model="filterData.integrationSystemId"
-                :options="systemStates" value-field="id" text-field="name"
-              ></b-form-select>
-            </b-col>
-
-            <b-col v-if="filterData?.pushState !== undefined" class="my-2">
-              <b-form-select
-                v-model="filterData.pushState"
-                :options="pushStates" value-field="id" text-field="name"
-              ></b-form-select>
-            </b-col>
-
-            <b-col v-if="filterData?.transactionReverseState !== undefined" class="my-2">
-              <b-form-select
-                v-model="filterData.transactionReverseState"
-                :options="transactionStates" value-field="id" text-field="name"
-              ></b-form-select>
-            </b-col>
-
-            <b-col v-if="filterData?.transactionState !== undefined" class="my-2">
-              <b-form-select
-                v-model="filterData.transactionState"
-                :options="transactionStates" value-field="id" text-field="name"
-              ></b-form-select>
-            </b-col>
-
-            <b-col v-if="filterData?.cardGateType !== undefined" class="my-2">
-              <b-form-select
-                v-model="filterData.cardGateType"
-                :options="cardTypes" value-field="id" text-field="name"
-              ></b-form-select>
-            </b-col>
-
-            <b-col v-if="filterData?.recordState !== undefined" class="my-2">
-              <b-form-select
-                v-model="filterData.recordState"
-                :options="actionList" value-field="id" text-field="name"
               ></b-form-select>
             </b-col>
 
@@ -284,18 +190,6 @@ const emit = defineEmits(['emit:search'])
               <input
                 v-model="filterData.search"
                 type="search" class="form-control" :placeholder="$t('search')"
-              />
-            </b-col>
-
-            <b-col v-if="filterData?.bankId !== undefined" class="my-2"> 
-              <Multiselect
-                :options="bankList"
-                v-model="filterData.bankId"
-                label="name" value-prop="id"
-                :placeholder="$t('menus.bank')"
-                :noOptionsText="$t('error.noData')"
-                :noResultsText="$t('error.noData')"
-                :searchable="true" :create-option="true"
               />
             </b-col>
 

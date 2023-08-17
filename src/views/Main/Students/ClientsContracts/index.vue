@@ -14,7 +14,7 @@ store.filterData = reactive({
     page: 1,
     rowsNumber: 1,
     totalCount: 1,
-    rowsPerPage: Number(localStorage.getItem('pageSize')) || 10
+    rowsPerPage: Number(localStorage.getItem('pageSize')) || 30
   }
 })
 </script>

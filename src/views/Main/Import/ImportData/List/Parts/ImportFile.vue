@@ -8,6 +8,10 @@ import { useImportFileStore } from '@/stores/importFile'
 import filters from '@/filters'
 import MakeSureDialog from '@/components/Dialogs/MakeSureDialog.vue'
 
+const props = defineProps({
+  universityList: Array
+})
+
 const { t } = useI18n()
 const toast = useToast()
 const fileName = ref('')
@@ -19,7 +23,6 @@ const modal = ref(false)
 const loading = ref(false)
 const modalLoading = ref(false)
 const modals = reactive({ modal: false })
-const universities = ref([{ id: null, name: 'Название ВУЗа', disabled: true }])
 
 const filterData: any = reactive({
   univerId: null,
@@ -55,23 +58,18 @@ const importExcel = async (event: any) => {
           excelData.value[i].id = i
 
           if (excelData.value[i]['ПИНФЛ']) {
-            excelData.value[i].pinfl = excelData.value[i]['ПИНФЛ'].toString().trim()
+            excelData.value[i].pinfl = excelData.value[i]['ПИНФЛ']?.toString().trim()
             delete excelData.value[i]['ПИНФЛ']
           }
 
-          if (excelData.value[i]['CLI_CODE']) {
-            excelData.value[i].cli_code = excelData.value[i]['CLI_CODE'].toString().trim()
-            delete excelData.value[i]['CLI_CODE']
+          if (excelData.value[i]['Дата выдачи паспорта']) {
+            excelData.value[i].issue_date = excelData.value[i]['Дата выдачи паспорта']?.toString().trim()
+            delete excelData.value[i]['Дата выдачи паспорта']
           }
 
-          if (excelData.value[i]['BIRDATE']) {
-            excelData.value[i].birdate = excelData.value[i]['BIRDATE'] ? filters.filterDate(excelData.value[i]['BIRDATE']) : ''
-            delete excelData.value[i]['BIRDATE']
-          }
-
-          if (excelData.value[i]['CLI_DEA_CNT']) {
-            excelData.value[i].cli_dea_cnt = excelData.value[i]['CLI_DEA_CNT'].toString().trim()
-            delete excelData.value[i]['CLI_DEA_CNT']
+          if (excelData.value[i]['Номер телефона']) {
+            excelData.value[i].phone_number = excelData.value[i]['Номер телефона']?.toString().trim()
+            delete excelData.value[i]['Номер телефона']
           }
         }
 
@@ -109,6 +107,11 @@ const file2Xce = (file: any) => {
   })
 }
 
+const preSubmit = () => {
+  if(filterData.univerId) modals.modal = true
+  else toast.error('Выберите ВУЗа')
+}
+
 async function submit() {
   try {
     modalLoading.value = true
@@ -116,30 +119,29 @@ async function submit() {
     let params: any = []
     excelData.value.map((data: any) => {
       params.push({
-        pinfl: data.pinfl,
-        cli_code: data.cli_code,
-        cli_dea_cnt: data.cli_dea_cnt || '',
-        birdate: data.birdate?.split('.').reverse().join('-') || ''
+        pinfl: data.pinfl || '',
+        issue_date: data.issue_date || '',
+        phone_number: data.phone_number || ''
       })
     })
 
     const data = await importFileStore.importFile({
       file_name: fileName.value,
+      university_code: filterData.univerId,
       data: params
     })
 
     if (data) {
       clearFile()
+      modal.value = false
+      emit('emit:refresh')
       toast.success(t("success.imported"));
     }
-
-    emit('emit:refresh')
   } catch (e) {
     toast.error('Произошла ошибка')
   } finally {
-    modalLoading.value = false
     modals.modal = false
-    modal.value = false
+    modalLoading.value = false
   }
 }
 
@@ -168,8 +170,8 @@ const emit = defineEmits(['emit:refresh'])
 </script>
 
 <template>
-  <b-button class="mb-1 fs-14" variant="outline-success" @click="modal = true">
-    <i class="mdi mdi-file-excel-outline fs-16"></i> Импортировать
+  <b-button class="fs-14" variant="outline-success" @click="modal = true">
+    <i class="mdi mdi-file-excel-outline fs-15"></i> Импортировать
   </b-button>
 
   <!-- add cutomer modal  -->
@@ -207,7 +209,7 @@ const emit = defineEmits(['emit:refresh'])
             <b-form-select
               v-model="filterData.univerId" id="import-univerId"
               :class="{'text-inactive': filterData.univerId === null}"
-              :options="universities" value-field="id" text-field="name"
+              :options="universityList" value-field="hemis_code" text-field="name"
             ></b-form-select>
           </b-col>
 
@@ -215,7 +217,7 @@ const emit = defineEmits(['emit:refresh'])
             <b-button
               variant="success" class="mb-1 px-5"
               :disabled="!excelData?.length"
-              @click="modals.modal = true"
+              @click="preSubmit"
             >
               {{ $t('import') }}
             </b-button>

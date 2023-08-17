@@ -189,3 +189,4 @@ onMounted(async () => {
     </b-col>
   </b-row>
 </template>
+@/stores/core

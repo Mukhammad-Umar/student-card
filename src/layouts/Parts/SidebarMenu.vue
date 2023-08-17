@@ -10,22 +10,20 @@ const menus = computed(() => {
   return [
     { separate: true, text: t('sysUsers.menu'), permission: ['all'] },
     { url: 'MainDashboard', text: t('main'), icon: 'mdi-home-outline', permission: ['hide'] },
-    { url: 'MainStudents', text: 'Студенты', icon: 'mdi-account-multiple-outline', permission: ['all'],
+    { url: 'MainStudents', text: 'Заявки', icon: 'mdi-account-multiple-outline', permission: ['all'],
       children: [
         { url: 'MainStudentsContracts', text: 'Студенты и контракты', permission: ['all'] },
         { url: 'MainStudentsAdd', text: 'Добавить студента', permission: ['hide'] }
       ]
     },
     { url: 'MainCards', text: 'Выпущенные карты', icon: 'mdi-view-grid-outline', permission: ['hide'] },
-    { url: 'MainImport', text: t('menus.import'), icon: 'mdi-tray-arrow-down', permission: ['all'],
+    { url: 'MainImport', text: 'Реестры', icon: 'mdi-tray-arrow-down', permission: ['all'],
       children: [
-        { url: 'MainImportData', text: 'Заявки на выпуск карт', permission: ['all'] },
+        { url: 'MainImportData', text: 'Выпуск карт', permission: ['all'] },
       ]
     },
     { separate: true, text: t('menus.system'), permission: ['all'] },
-    { url: 'MainUsers', text: 'Пользователи', icon: 'mdi-account-multiple-outline', permission: ['all'] },
-    { url: 'MainIntegration', text: 'Интеграции', icon: 'mdi-rocket-outline', permission: ['hide'] },
-    { url: 'MainSystem', text: t('menus.systemSettings'), icon: 'mdi-vector-arrange-below', permission: ['hide'] }
+    { url: 'MainUsers', text: 'Пользователи', icon: 'mdi-account-multiple-outline', permission: ['all'] }
   ]
 })
 </script>

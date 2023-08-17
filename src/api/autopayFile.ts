@@ -17,6 +17,10 @@ export async function getArchiveFiles(payload: any) {
 }
 
 export async function getFileInfoByFileId(payload: any) {
-  const { data } = await api.get(filePath + `/students_in_upload/${payload.upload_id}/?count=${payload.count}&page_size=${payload.page_size}`)
+  const upload_id = payload.upload_id
+  payload.upload_id = null
+  const { data } = await api.get(filePath + `/students_in_upload/${upload_id}/?`, {
+    params: payload
+  })
   return data;
 }

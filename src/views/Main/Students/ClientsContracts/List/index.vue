@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { useBranchStore } from '@/stores/branch'
+import { useCoreStore } from '@/stores/core'
 import { onMounted, ref, computed } from 'vue'
 import { useClientStore } from '@/stores/client'
 
@@ -15,17 +15,16 @@ const props: any = defineProps({
 })
 
 const { t } = useI18n()
-const branchStore = useBranchStore()
+const coreStore = useCoreStore()
 const clientStore = useClientStore()
 
 const rows: any = ref([])
-const branches = ref([])
 const loading = ref(true)
 const loadBtn = ref(false)
-const exportRef: any = ref(null)
 const numerationIndex = ref(1)
+const exportRef: any = ref(null)
+const universities: any = ref([])
 const statuses = ref([{ id: null, name: 'Статус студента', disabled: true }])
-const universities = ref([{ id: null, name: 'Название ВУЗа', disabled: true }])
 
 const fields = computed(() => [
   { key: 'index', label: '№', class: 'text-center' },
@@ -33,17 +32,20 @@ const fields = computed(() => [
   { key: 'firstname', label: t('filters.fio') },
   { key: 'university_name', label: 'Название Вуза', class: 'text-center' },
   { key: 'serial_number', label: t('userInfo.numberSeries'), class: 'text-center',
-    formatter: (value: any) => value?.substring(0, 2) + ' ' + value?.slice(2) },
-  { key: 'student_type_code', label: 'Выпуск карты', class: 'text-center' },
-  { key: 'status_code', label: 'Статус студента', class: 'text-center' },
+    formatter: (value: any) => value ? value?.substring(0, 2) + ' ' + value?.slice(2) : '' },
+  { key: 'hemis_id', label: 'ID студента', class: 'text-center' },
+  { key: 'card_number', label: 'Номер карты', class: 'text-center' },
+  { key: 'contract', label: 'Контракт СКС', class: 'text-center' },
+  { key: 'phone_number', label: 'Номер телефона', class: 'text-center',
+    formatter: (value: any) => value.length === 12 ? filters.filterFullPhoneNumber(value) : value},
+  { key: 'status', label: 'Статус', class: 'text-center' },
   { key: 'actions', label: t('filters.action'), class: 'text-center' }
 ])
 
-async function getBranches() {
-  props.filterData.organizationBranchId = 0
-  const data = await branchStore.getBranches()
-  if(data[0].name === 'Все') data[0].name = 'Все филиалы'
-  branches.value = data
+async function getUniversities() {
+  const data = await coreStore.getUniversities()
+  universities.value = data
+  universities.value.unshift({ hemis_code: null, name: 'Все ВУЗы' })
 }
 
 async function getClients() {
@@ -51,11 +53,12 @@ async function getClients() {
     loading.value = true
 
     const data: any = await clientStore.getClients({
-      Fio: props.filterData?.fio,
-      Pinfl: props.filterData?.pinfl || null,
-      PassportInfo: props.filterData?.passportInfo?.replace(/\s/g, '') || null,
-      currentPage: props.filterData?.pagination.page,
-      // PerPage: props.filterData?.pagination.rowsPerPage
+      full_name: props.filterData?.fio,
+      pinfl: props.filterData?.pinfl || null,
+      university_code: props.filterData?.university,
+      serial_number: props.filterData?.passportInfo ? props.filterData.passportInfo.toUpperCase()?.replace(/\s/g, "") : null,
+      count: props.filterData?.pagination.page,
+      page_size: props.filterData?.pagination.rowsPerPage
     })
 
     rows.value = data?.results
@@ -97,7 +100,7 @@ async function downloadExcel() {
 }
 
 onMounted(async () => {
-  // await getBranches()
+  await getUniversities()
   await getClients()
 })
 </script>

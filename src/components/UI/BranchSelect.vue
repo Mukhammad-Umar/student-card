@@ -46,3 +46,4 @@ onMounted(() => {
     text-field="name"
   ></b-form-select>
 </template>
+@/stores/core

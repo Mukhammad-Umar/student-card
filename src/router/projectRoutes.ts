@@ -87,36 +87,24 @@ export const projectRoutes: RouteRecordRaw[] = [
         redirect: { name: 'MainImportData' },
         children: [
           {
-            path: 'data',
+            path: '',
             name: 'MainImportData',
-            meta: { title: 'Import' },
-            component: () => import('@/views/Main/Import/ImportData/index.vue')
-          },
-          {
-            path: "view/:id",
-            name: "MainImportView",
-            meta: { title: 'View' },
-            component: () => import("@/views/Main/Import/View/index.vue"),
-          }
-        ]
-      },
-      {
-        path: 'integration',
-        name: 'MainIntegration',
-        component: () => import('@/views/Main/Integration/index.vue'),
-        redirect: { name: 'MainIntegrationList' },
-        children: [
-          {
-            path: 'list',
-            name: 'MainIntegrationList',
-            meta: { title: 'Integration' },
-            component: () => import('@/views/Main/Integration/List/index.vue')
-          },
-          {
-            path: 'edit/:id',
-            name: 'MainIntegrationEdit',
-            meta: { title: 'IntegrationEdit' },
-            component: () => import('@/views/Main/Integration/Edit/index.vue')
+            component: () => import('@/views/Main/Import/ImportData/index.vue'),
+            redirect: { name: 'MainImportDataList' },
+            children: [
+              {
+                path: 'list',
+                name: 'MainImportDataList',
+                meta: { title: 'Import' },
+                component: () => import('@/views/Main/Import/ImportData/List/index.vue'),
+              },
+              {
+                path: "view/:id",
+                name: "MainImportDataView",
+                meta: { title: 'View' },
+                component: () => import("@/views/Main/Import/ImportData/View/index.vue"),
+              }
+            ]
           }
         ]
       },
@@ -145,12 +133,6 @@ export const projectRoutes: RouteRecordRaw[] = [
             component: () => import('@/views/Main/Users/Edit/index.vue')
           }
         ]
-      },
-      {
-        path: 'system',
-        name: 'MainSystem',
-        component: () => import('@/views/Main/System/index.vue'),
-        meta: { title: 'System' }
       }
     ]
   },

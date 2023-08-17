@@ -3,7 +3,9 @@ import { api } from '@/plugins/axios'
 const admin = 'student_data_hemis'
 
 export async function getClients(payload: any) {
-  const data = await api.get(admin + `/students/?count=${payload.currentPage}`)
+  const data = await api.get(admin + '/students/', {
+    params: payload
+  })
   return data
 }
 

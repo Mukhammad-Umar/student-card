@@ -23,7 +23,7 @@ defineExpose({
 
 <template>
   <b-button
-    class="excel-import ms-auto"
+    class="excel-import"
     :loadingMode="'fill'"
     :loading="loadBtn"
     @click="$emit('emit:import')"

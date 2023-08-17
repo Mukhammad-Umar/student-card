@@ -8,7 +8,9 @@ export async function getBranches() {
 }
 
 export async function getImportedFiles(payload: any) {
-  const { data } = await api.get(`student_data_hemis/get_uploads/?count=${payload.currentPage}&page_size=${payload.perPage}`)
+  const { data } = await api.get('student_data_hemis/get_uploads/', {
+    params: payload
+  })
   return data
 }
 

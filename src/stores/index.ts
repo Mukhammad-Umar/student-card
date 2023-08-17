@@ -5,7 +5,6 @@ export const mainStore = defineStore('main', {
   state: () => ({
     filterData: {},
     imgUrl: URL_IMG,
-    refreshTokenIntervalId: 0,
     currLocale: localStorage.getItem('locale') || 'ru',
     orgType: Number(localStorage.getItem('orgType')) ?? 0
   }),

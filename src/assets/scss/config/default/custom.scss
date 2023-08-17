@@ -583,6 +583,10 @@ File: Custom Css File
   min-height: 37.5px !important;
 }
 
+.mt-input {
+  margin-top: var(--vz-gutter-y);
+}
+
 .mt-1 {
   margin-top: 4px;
 }
