@@ -14,11 +14,9 @@
         <div class="d-flex justify-content-end">
           <!-- <b-button class="mb-1" variant="primary">
             Перезапуск реестра
-          </b-button>
-
-          <b-button class="ml-2 mb-1" variant="primary">
-            Отправить на печать
           </b-button> -->
+
+          <PrintCard :universityList="universityList" />
 
           <ExportBtn
             ref="exportRef" class="ml-2 mb-1"

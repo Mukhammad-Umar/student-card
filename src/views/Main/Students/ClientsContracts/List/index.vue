@@ -6,6 +6,7 @@ import { useClientStore } from '@/stores/client'
 
 import filters from '@/filters'
 import ExportBtn from '@/components/Common/ExportBtn.vue'
+import PrintCard from '@/components/Dialogs/PrintCard.vue'
 import TableFilters from '@/components/Common/TableFilters.vue'
 import TablePerPage from '@/components/Common/TablePerPage.vue'
 import TablePagination from '@/components/Common/TablePagination.vue'
@@ -24,6 +25,7 @@ const loadBtn = ref(false)
 const numerationIndex = ref(1)
 const exportRef: any = ref(null)
 const universities: any = ref([])
+const universityList: any = ref([])
 const statuses = ref([{ id: null, name: 'Статус студента', disabled: true }])
 
 const fields = computed(() => [
@@ -44,6 +46,10 @@ const fields = computed(() => [
 
 async function getUniversities() {
   const data = await coreStore.getUniversities()
+
+  universityList.value = JSON.parse(JSON.stringify(data))
+  universityList.value.unshift({ hemis_code: null, name: 'Выберите ВУЗа', disabled: true })
+
   universities.value = data
   universities.value.unshift({ hemis_code: null, name: 'Все ВУЗы' })
 }

@@ -17,8 +17,6 @@ async function getList() {
   try {
     const data = await coreStore.getProcessLogs(route.params.id)
     processLogs.value = data
-    console.log(processLogs.value);
-    
   } finally {
     cardLoaders.applicationLoad = false
     cardLoaders.cardPrintLoad = false
