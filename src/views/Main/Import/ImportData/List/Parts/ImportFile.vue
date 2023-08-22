@@ -4,13 +4,9 @@ import { read, utils } from 'xlsx'
 import { useToast } from 'vue-toastification'
 import { ref, reactive, onMounted } from 'vue'
 import { useImportFileStore } from '@/stores/importFile'
-
-import filters from '@/filters'
 import MakeSureDialog from '@/components/Dialogs/MakeSureDialog.vue'
 
-const props = defineProps({
-  universityList: Array
-})
+const props = defineProps({ universityList: Array })
 
 const { t } = useI18n()
 const toast = useToast()
@@ -60,11 +56,6 @@ const importExcel = async (event: any) => {
           if (excelData.value[i]['ПИНФЛ']) {
             excelData.value[i].pinfl = excelData.value[i]['ПИНФЛ']?.toString().trim()
             delete excelData.value[i]['ПИНФЛ']
-          }
-
-          if (excelData.value[i]['Дата выдачи паспорта']) {
-            excelData.value[i].issue_date = excelData.value[i]['Дата выдачи паспорта']?.toString().trim()
-            delete excelData.value[i]['Дата выдачи паспорта']
           }
 
           if (excelData.value[i]['Номер телефона']) {
@@ -120,7 +111,6 @@ async function submit() {
     excelData.value.map((data: any) => {
       params.push({
         pinfl: data.pinfl || '',
-        issue_date: data.issue_date || '',
         phone_number: data.phone_number || ''
       })
     })

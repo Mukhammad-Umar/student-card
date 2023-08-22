@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import filters from '@/filters'
 
 const { info }: any = defineProps<{ info: Object }>()
 
@@ -27,6 +28,11 @@ const titles = computed(() => {
               :value="info[title.key]" readonly
               type="text" class="form-control text-primary cup"
               @click="$router.push({name: 'MainImportDataView', params: {id: info.file_upload_id}})"
+            />
+            <input
+              v-else-if="title.key === 'phone_number'"
+              :value="filters.filterFullPhoneNumber(info[title.key])" readonly
+              type="text" class="form-control"
             />
             <input
               v-else type="text" class="form-control"

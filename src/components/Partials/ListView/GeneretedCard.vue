@@ -1,20 +1,7 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
 import SimpleLoader from '@/components/Common/SimpleLoader.vue'
 
-const cards = ref([])
-const loading = ref(true)
-
-async function getList() {
-  try {
-  } finally {
-    loading.value = false
-  }
-}
-
-onMounted(() => {
-  getList()
-})
+const { info }: any = defineProps<{ info: Object }>()
 </script>
 
 <template>
@@ -23,8 +10,8 @@ onMounted(() => {
       <h5 class="card-title mb-0 flex-center">Сгенерированный дизайн карты</h5>
     </b-card-header>
     <b-card-body>
-      <div v-if="cards?.length">
-        <h6>Content</h6>
+      <div v-if="info?.student_card" class="d-flex border px-3 br-15">
+        <img :src="info.student_card" style="width: 100%;" />
       </div>
       <div v-else class="py-2 flex-center">
         <span class="text-inactive">{{ $t('viewBox.noCards') }}</span>
