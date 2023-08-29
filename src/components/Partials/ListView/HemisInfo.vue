@@ -82,6 +82,20 @@ const titles = computed(() => {
             </div>
           </b-col>
 
+          <b-col v-else-if="title.key === 'university_name'" lg="8" md="6" sm="6">
+            <div>
+              <label class="form-label">{{ title.name + ' ' }}</label>
+              <input type="text" class="form-control" :value="info.university_name" readonly />
+            </div>
+          </b-col>
+
+          <b-col v-else-if="title.key === 'speciality_name'" lg="8" md="6" sm="6">
+            <div>
+              <label class="form-label">{{ title.name + ' ' }}</label>
+              <input type="text" class="form-control" :value="info.speciality_name" :title="info.speciality_name" readonly />
+            </div>
+          </b-col>
+
           <b-col v-else-if="title.key === 'address'" lg="8" md="6" sm="6">
             <div>
               <label class="form-label">{{ title.name + ' ' }}</label>

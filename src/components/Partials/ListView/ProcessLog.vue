@@ -38,7 +38,7 @@ onMounted(() => getList())
             <SimpleLoader v-if="cardLoaders.applicationLoad" />
 
             <template v-else>
-              <div class="timeline">
+              <div v-if="processLogs?.length" class="timeline">
                 <div class="timeline-line"></div>
                 <div v-for="(processLog, index) in (processLogs as any)" class="timeline-box d-flex align-items-center">
                   <div
@@ -55,9 +55,9 @@ onMounted(() => getList())
                 </div>
               </div>
 
-              <!-- <div v-else class="pt-2 flex-center">
-                <span class="text-inactive">{{ $t('viewBox.noCards') }}</span>
-              </div> -->
+              <div v-else class="pt-2 flex-center">
+                <span class="text-inactive">{{ $t('noData') }}</span>
+              </div>
             </template>
           </b-card-body>
         </b-tab>
@@ -71,7 +71,7 @@ onMounted(() => getList())
               </div>
 
               <!-- <div v-else class="pt-2 flex-center">
-                <span class="text-inactive">{{ $t('viewBox.noCards') }}</span>
+                <span class="text-inactive">{{ $t('noData') }}</span>
               </div> -->
             </template>
           </b-card-body>

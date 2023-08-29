@@ -65,7 +65,7 @@ export default {
   },
 
   filterPhoneNumber(val: string) {
-    return val ? '(' + val.slice(0, 2) + ') ' + val.slice(2, 5) + '-' + val.slice(5, 7) + '-' + val.slice(7) : ''
+    return val ? '+998 ' + '(' + val.slice(0, 2) + ') ' + val.slice(2, 5) + '-' + val.slice(5, 7) + '-' + val.slice(7) : ''
   },
 
   filterFullPhoneNumber(val: string) {

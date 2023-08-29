@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
+import { useToast } from 'vue-toastification'
 import { useCoreStore } from '@/stores/core'
+import { useCardStore } from '@/stores/card'
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useAutopayFileStore } from '@/stores/autopayFile'
 
@@ -9,33 +11,40 @@ import filters from '@/filters'
 import TableFilters from '@/components/Common/TableFilters.vue'
 import TablePerPage from '@/components/Common/TablePerPage.vue'
 import TablePagination from '@/components/Common/TablePagination.vue'
+import MakeSureDialog from '@/components/Dialogs/MakeSureDialog.vue'
 
 const { t } = useI18n()
 const route = useRoute()
+const toast = useToast()
 const coreStore = useCoreStore()
+const cardStore = useCardStore()
 const autopayFile = useAutopayFileStore()
 
 const fileList: any = ref({})
 const numerationIndex = ref(1)
-
-const loading = ref(true)
-const fileLoad = ref(false)
 const universities: any = ref([])
 
-const statuses = ref([{ id: null, name: 'Статус карты', disabled: true }])
+const loading = ref(false)
+const fileLoad = ref(false)
+const modalLoading = ref(false)
+const modals = reactive({ modal: false })
+
+const statuses = ref([{ id: null, name: 'Статус', disabled: true }])
 
 const filterData: any = reactive({
   fio: null,
   pinfl: null,
   status: null,
+  fileName: '',
   hemisId: null,
   university: null,
   passportInfo: null,
   pagination: {
     page: 1,
-    rowsPerPage: Number(localStorage.getItem('pageSize')) || 30,
     rowsNumber: 1,
     totalCount: 1,
+    successCount: 1,
+    rowsPerPage: Number(localStorage.getItem('pageSize')) || 30
   },
 })
 
@@ -49,8 +58,6 @@ const fields = computed(() => [
   },
   { key: 'hemis_id', label: 'ID студента', class: 'text-center' },
   { key: 'faculty_name', label: 'Факультет/Отделение', class: 'text-center' },
-  { key: 'phone_number', label: 'Номер телефона', class: 'text-center',
-    formatter: (value: any) => value.length === 12 ? filters.filterFullPhoneNumber(value) : value},
   { key: 'status', label: t('status'), class: 'text-center' },
 ])
 
@@ -77,8 +84,11 @@ async function getFileInfoByFileId() {
     })
 
     fileList.value = data?.results
-    filterData.pagination.rowsNumber = Math.ceil(data?.total / data?.page_size)
     filterData.pagination.totalCount = data?.total
+    filterData.pagination.successCount = data?.pending_to_print
+    filterData.pagination.rowsNumber = Math.ceil(data?.total / data?.page_size)
+
+    filterData.fileName = data?.results?.length ? data?.results[0].file_name : ''
 
     numerationIndex.value = (filterData.pagination.page - 1) * filterData.pagination.rowsPerPage
     signIndex()
@@ -93,6 +103,22 @@ const signIndex = () => {
       if (filterData.pagination.page === 1) record.index = index + 1
       else record.index = numerationIndex.value + index + 1
     })
+  }
+}
+
+async function sendToPrint(){
+  try{
+    modalLoading.value = true
+    const data = await cardStore.sendToPrint([
+      { id: route.params.id }
+    ])
+    
+    if(data.student_being_proccessed?.length){
+      toast.success("Файл успешно отправлен на печать");
+    }
+  } finally {
+    modals.modal = false
+    modalLoading.value = false
   }
 }
 
@@ -133,15 +159,15 @@ onMounted(async () => {
           </b-button>
         </div>
 
-        <!-- <div class="d-flex flex-wrap justify-content-end mb-2">
-          <b-button class="mb-1" variant="primary">
+        <div class="d-flex flex-wrap justify-content-end mb-2">
+          <!-- <b-button class="mb-1" variant="primary">
             Перезапуск реестра
-          </b-button>
+          </b-button> -->
 
-          <b-button class="ml-2 mb-1" variant="primary">
+          <b-button class="ml-2 mb-1" variant="primary" @click="modals.modal = true">
             Отправить на печать
           </b-button>
-        </div> -->
+        </div>
       </div>
 
       <b-card no-body class="card-box-shadow">
@@ -155,16 +181,16 @@ onMounted(async () => {
 
           <div class="table-count-info d-flex align-items-center ms-auto">
             <span class="fs-14 border-end text-right pr-2">
-              Файл: {{ 'template.xls' }}
+              Файл: {{ filterData.fileName }}
             </span>
             <span class="fs-14 border-end text-right pr-2 ml-2">
               Всего: {{ filters.filterMoney(filterData.pagination.totalCount) }}
             </span>
             <span class="fs-14 border-end text-right pr-2 ml-2">
-              Обработаны успешно: {{ filters.filterMoney(700) }}
+              Обработаны успешно: {{ filters.filterMoney(filterData.pagination.successCount) }}
             </span>
             <span class="fs-14 ml-2 text-right">
-              Ошибки: {{ filters.filterMoney(300) }}
+              Ошибки: {{ filters.filterMoney(filterData.pagination.totalCount - filterData.pagination.successCount) }}
             </span>
           </div>
         </b-card-header>
@@ -215,5 +241,14 @@ onMounted(async () => {
         @emit:change="getFileInfoByFileId"
       />
     </b-col>
+
+    <MakeSureDialog
+      :modals="modals"
+      :loading="modalLoading"
+      @emit:close="modals.modal = false"
+      @emit:success="sendToPrint"
+    >
+      Файл будет отправлен на печать. Продолжать?
+    </MakeSureDialog>
   </b-row>
 </template>

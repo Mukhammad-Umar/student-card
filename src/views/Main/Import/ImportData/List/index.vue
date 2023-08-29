@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useCoreStore } from '@/stores/core'
-import { computed, onMounted, ref } from 'vue'
+import { useCardStore } from '@/stores/card'
+import { useToast } from 'vue-toastification'
+import { computed, onMounted, ref, reactive } from 'vue'
 import { useImportFileStore } from '@/stores/importFile'
 
 import filters from '@/filters'
@@ -8,27 +10,35 @@ import ImportFile from './Parts/ImportFile.vue'
 import TableFilters from '@/components/Common/TableFilters.vue'
 import TablePerPage from '@/components/Common/TablePerPage.vue'
 import TablePagination from '@/components/Common/TablePagination.vue'
+import MakeSureDialog from '@/components/Dialogs/MakeSureDialog.vue'
 
 const { filterData }: any = defineProps<{filterData: Object}>()
 
-const loading = ref(false)
+const toast = useToast()
+const fileId = ref(null)
 const numerationIndex = ref(1)
 const coreStore = useCoreStore()
+const cardStore = useCardStore()
 const importFileStore = useImportFileStore()
+
+const loading = ref(false)
+const modalLoading = ref(false)
+const modals = reactive({ modal: false })
 
 const files = ref([])
 const users: any = ref([])
 const universities: any = ref([])
 const universityList: any = ref([])
 
-
 const fields = computed(() => [
   { key: 'index', label: '№', class: 'text-center' },
   { key: 'file_name', label: 'Файл' },
   { key: 'username', label: 'Пользователь', class: 'text-center' },
   { key: 'university_name', label: 'Название Вуза', class: 'text-center' },
-  { key: 'isActivate', label: 'Кол-во записей', class: 'text-center' },
-  { key: 'isActivate', label: 'Успешно обработано', class: 'text-center' },
+  { key: 'students_total', label: 'Кол-во записей', class: 'text-center',
+    formatter: (val: any) => filters.filterMoney(val) },
+  { key: 'ready_to_print_count', label: 'Успешно обработано', class: 'text-center',
+    formatter: (val: any) => filters.filterMoney(val) },
   { key: 'status', label: 'Статус', class: 'text-center' },
   { key: 'created_at', label: 'Дата', class: 'text-center',
     formatter: (val: any) => filters.filterDateAndTime(val)},
@@ -80,6 +90,22 @@ const signIndex = () => {
       if (filterData.pagination.page === 1) row.index = index + 1
       else row.index = numerationIndex.value + index + 1
     })
+  }
+}
+
+async function sendToPrint(){
+  try{
+    modalLoading.value = true
+    const data = await cardStore.sendToPrint([
+      { id: fileId.value }
+    ])
+    
+    if(data.student_being_proccessed?.length){
+      toast.success("Файл успешно отправлен на печать");
+    }
+  } finally {
+    modals.modal = false
+    modalLoading.value = false
   }
 }
 
@@ -161,6 +187,13 @@ onMounted(async () => {
               <div class="d-flex justify-content-center">
                 <i
                   v-if="item.file_to_export"
+                  v-tooltip:bottom="'Отправить на печать'"
+                  @click="fileId = item.id; modals.modal = true;"
+                  class="mdi mdi-send-outline text-primary cup fs-21 ml-1"
+                ></i>
+
+                <i
+                  v-if="item.file_to_export"
                   v-tooltip:bottom="'Скачать'"
                   @click="downloadFile(item.file_to_export)"
                   class="mdi mdi-tray-arrow-down text-success cup fs-22 ml-1"
@@ -181,5 +214,14 @@ onMounted(async () => {
         @emit:change="getList"
       />
     </b-col>
+
+    <MakeSureDialog
+      :modals="modals"
+      :loading="modalLoading"
+      @emit:close="modals.modal = false"
+      @emit:success="sendToPrint"
+    >
+      Файл будет отправлен на печать. Продолжать?
+    </MakeSureDialog>
   </b-row>
 </template>

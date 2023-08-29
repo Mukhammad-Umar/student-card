@@ -5,9 +5,8 @@ const { info }: any = defineProps<{ info: Object }>()
 
 const titles = computed(() => {
   return [
-    { name: 'Код клиента', key: 'id' },
-    { name: 'Номер договора СКС', key: 'contract_number' },
-    { name: 'Нормер карты', key: 'card_number' },
+    { name: 'Код клиента', key: 'abs_client_id' },
+    { name: 'Card Idn', key: 'abs_card_idn' },
   ]
 })
 </script>

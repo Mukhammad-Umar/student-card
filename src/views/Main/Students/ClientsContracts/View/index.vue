@@ -23,11 +23,11 @@ async function getData() {
     loading.value = true
     const data = await clientStore.getById(route.params.id)
 
-    data.issue_date = data.issue_date ? filters.filterMonthDate(data.issue_date) : ''
-    data.birthday = data.birthday ? filters.filterMonthDate(data.birthday?.split('T')[0]) : ''
-    data.spc_birthdate = data.spc_birthdate ? filters.filterMonthDate(data.spc_birthdate?.split('T')[0]) : ''
-    data.spc_docdatebegin = data.spc_docdatebegin ? filters.filterMonthDate(data.spc_docdatebegin?.split('T')[0]) : ''
-    data.spc_docdateend = data.spc_docdateend ? filters.filterMonthDate(data.spc_docdateend?.split('T')[0]) : ''
+    data.issue_date = data.issue_date ? filters.filterDate(data.issue_date) : ''
+    data.birthday = data.birthday ? filters.filterDate(data.birthday?.split('T')[0]) : ''
+    data.spc_birthdate = data.spc_birthdate ? filters.filterDate(data.spc_birthdate?.split('T')[0]) : ''
+    data.spc_docdatebegin = data.spc_docdatebegin ? filters.filterDate(data.spc_docdatebegin?.split('T')[0]) : ''
+    data.spc_docdateend = data.spc_docdateend ? filters.filterDate(data.spc_docdateend?.split('T')[0]) : ''
     data.serial_number = data.serial_number ? data.serial_number?.substring(0, 2) + ' ' + data.serial_number?.slice(2) : ''
 
     allData.value = data
@@ -62,10 +62,22 @@ onMounted(() => getData())
       <DpmInfo :info="allData" />
     </b-col>
 
-    <b-col lg="4">
-      <ProcessLog />
-
-      <GeneretedCard :info="allData" />
+    <b-col lg="4" class="position-relative">
+      <div class="right-column-sticky">
+        <ProcessLog />
+  
+        <GeneretedCard :info="allData" />
+      </div>
     </b-col>
   </b-row>
 </template>
+
+<style lang="scss">
+.right-column-sticky {
+  top: 80px;
+  display: unset;
+  position: sticky;
+  overflow: visible;
+  margin-bottom: 1.5rem;
+}
+</style>

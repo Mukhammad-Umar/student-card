@@ -31,8 +31,10 @@ const titles = computed(() => {
             />
             <input
               v-else-if="title.key === 'phone_number'"
-              :value="filters.filterFullPhoneNumber(info[title.key])" readonly
-              type="text" class="form-control"
+              :value="info.phone_number?.length === 12 
+                ? filters.filterFullPhoneNumber(info.phone_number) : info.phone_number?.length === 9 
+                ? filters.filterPhoneNumber(info.phone_number) : info.phone_number" 
+              readonly type="text" class="form-control"
             />
             <input
               v-else type="text" class="form-control"
