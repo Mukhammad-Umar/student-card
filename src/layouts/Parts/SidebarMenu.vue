@@ -13,7 +13,6 @@ const menus = computed(() => {
     { url: 'MainStudents', text: 'Заявки', icon: 'mdi-account-multiple-outline', permission: ['all'],
       children: [
         { url: 'MainStudentsContracts', text: 'Студенты и контракты', permission: ['all'] },
-        { url: 'MainStudentsAdd', text: 'Добавить студента', permission: ['hide'] }
       ]
     },
     { url: 'MainCards', text: 'Выпущенные карты', icon: 'mdi-view-grid-outline', permission: ['hide'] },

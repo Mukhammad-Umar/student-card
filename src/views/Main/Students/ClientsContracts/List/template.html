@@ -24,13 +24,6 @@
             :text="$t('menus.payersContracts')"
             @emit:import="downloadExcel"
           />
-
-          <b-button 
-            class="ml-2" variant="primary" v-can="['hide']"
-            @click="$router.push({ name: 'MainStudentsAdd' })" 
-          >
-            {{ $t('add') }} <i class="mdi mdi-plus"></i>
-          </b-button>
         </div>
       </b-card-header>
 
