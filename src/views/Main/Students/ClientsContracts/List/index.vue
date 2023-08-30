@@ -38,8 +38,7 @@ const fields = computed(() => [
   { key: 'hemis_id', label: 'ID студента', class: 'text-center' },
   { key: 'card_number', label: 'Номер карты', class: 'text-center' },
   { key: 'contract', label: 'Контракт СКС', class: 'text-center' },
-  { key: 'phone_number', label: 'Номер телефона', class: 'text-center text-nowrap',
-    formatter: (value: any) => value.length === 12 ? filters.filterFullPhoneNumber(value) : value},
+  { key: 'phone_number', label: 'Номер телефона', class: 'text-center text-nowrap' },
   { key: 'status', label: 'Статус', class: 'text-center' },
   { key: 'actions', label: t('filters.action'), class: 'text-center' }
 ])
