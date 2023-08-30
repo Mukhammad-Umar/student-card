@@ -31,19 +31,6 @@ const closeContributors = () => {
   showContributors.value = false
 }
 
-async function checkTokenValid() {
-  try {
-    const data = await authStore.checkTokenValid()
-    if (!data?.result.success) await authStore.logout()
-    else await getMe()
-  } catch (e) {
-    await authStore.errorLogout()
-    loading.value = false
-  }
-}
-
-// onMounted(() => checkTokenValid())
-
 const userInfo = ref({})
 
 async function getMe() {

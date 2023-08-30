@@ -12,11 +12,6 @@ export const useClientStore = defineStore('client', () => {
     return data
   }
 
-  async function addClientContract(payload: any) {
-    const data = await api.addClientContract(payload)
-    return data
-  }
-
   async function getById(id: any) {
     const data = await api.getById(id)
     return data
@@ -32,7 +27,6 @@ export const useClientStore = defineStore('client', () => {
     totalPages,
     totalCount,
     getClients,
-    addClientContract,
     getById,
     downloadPayers
   }

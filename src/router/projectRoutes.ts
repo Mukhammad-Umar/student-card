@@ -49,12 +49,6 @@ export const projectRoutes: RouteRecordRaw[] = [
                 component: () => import('@/views/Main/Students/ClientsContracts/View/index.vue')
               }
             ]
-          },
-          {
-            path: 'add',
-            name: 'MainStudentsAdd',
-            meta: { title: 'ClientAdd' },
-            component: () => import('@/views/Main/Students/AddClient/index.vue')
           }
         ]
       },

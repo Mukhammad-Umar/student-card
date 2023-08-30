@@ -37,7 +37,7 @@ onMounted(() => getList())
 
             <template v-else>
               <div v-if="processLogs?.length" class="timeline">
-                <div class="timeline-line"></div>
+                <div :class="{'timeline-line': processLogs?.length > 1 }"></div>
                 <div v-for="(processLog, index) in (processLogs as any)" class="timeline-box d-flex align-items-center">
                   <div
                     class="timeline-box-number z-index-1 flex-center"
@@ -66,7 +66,7 @@ onMounted(() => getList())
 
             <template v-else>
               <div v-if="printCards?.length" class="timeline">
-                <div class="timeline-line"></div>
+                <div :class="{'timeline-line': printCards?.length > 1 }"></div>
                 <div v-for="(printCard, index) in (printCards as any)" class="timeline-box d-flex align-items-center">
                   <div
                     class="timeline-box-number z-index-1 flex-center"
