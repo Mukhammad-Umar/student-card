@@ -4,22 +4,20 @@ import { useCoreStore } from '@/stores/core'
 import { ref, reactive, onMounted } from 'vue'
 import SimpleLoader from '@/components/Common/SimpleLoader.vue'
 
+const loading = ref(true)
+const printCards = ref([])
 const processLogs = ref([])
 const route: any = useRoute()
 const coreStore = useCoreStore()
 
-const cardLoaders = reactive({
-  applicationLoad: true,
-  cardPrintLoad: true,
-})
-
 async function getList() {
   try {
     const data = await coreStore.getProcessLogs(route.params.id)
-    processLogs.value = data
+    
+    processLogs.value = data.filter((item: any) => item.journal_type === "DATA_FETCH")
+    printCards.value = data.filter((item: any) => item.journal_type === "CARD_ISSUE")
   } finally {
-    cardLoaders.applicationLoad = false
-    cardLoaders.cardPrintLoad = false
+    loading.value = false
   }
 }
 
@@ -35,7 +33,7 @@ onMounted(() => getList())
       <b-tabs content-class="mt-1" fill class="view-tab">
         <b-tab :title="'Заявка'" active>
           <b-card-body class="scrollbar mh-300 pt-4 px-0">
-            <SimpleLoader v-if="cardLoaders.applicationLoad" />
+            <SimpleLoader v-if="loading" />
 
             <template v-else>
               <div v-if="processLogs?.length" class="timeline">
@@ -61,18 +59,33 @@ onMounted(() => getList())
             </template>
           </b-card-body>
         </b-tab>
+
         <b-tab :title="'Печать карты'">
           <b-card-body class="scrollbar mh-300">
-            <SimpleLoader v-if="cardLoaders.cardPrintLoad" />
+            <SimpleLoader v-if="loading" />
 
             <template v-else>
-              <div>
-                <h6>Content</h6>
+              <div v-if="printCards?.length" class="timeline">
+                <div class="timeline-line"></div>
+                <div v-for="(printCard, index) in (printCards as any)" class="timeline-box d-flex align-items-center">
+                  <div
+                    class="timeline-box-number z-index-1 flex-center"
+                    :class="printCard.current_status === 'ERROR' || printCard.current_status ===  'REJECTED' 
+                    ? 'bg-text-danger' : printCard.current_status === 'PENDING_FOR_PRINT' 
+                    ? 'bg-text-success' : 'bg-text-primary'" 
+                  >
+                    {{ index + 1 }}
+                  </div>
+                  <div class="timeline-box-text">
+                    <h6>{{ printCard.status_name }}</h6>
+                    <p class="mb-0 text-inactive">{{ printCard.description }}</p>
+                  </div>
+                </div>
               </div>
 
-              <!-- <div v-else class="pt-2 flex-center">
+              <div v-else class="pt-2 flex-center">
                 <span class="text-inactive">{{ $t('noData') }}</span>
-              </div> -->
+              </div>
             </template>
           </b-card-body>
         </b-tab>
